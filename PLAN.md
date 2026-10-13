@@ -15,6 +15,7 @@ Setup and deployment steps are in [README.md](README.md).
 | 5 | Profile and order lists (Canceled, Delivered…) | Built: profile, saved addresses, orders by status. |
 | 6 | Emails styled like the site | Built: order confirmation, owner alert, status updates (confirmed, shipped, delivered, canceled, returned), contact-form forward, newsletter welcome. SMTP, retried twice, never blocks an order, HTML-escaped. Needs the mailbox password to send for real. Preview: `npm run mail:preview`. |
 | - | Design copied from current store | Built: original CSS reused, scoped per page so every page renders like the original. |
+| 7 | Animated logo intro | Built (home page, once per browser session): the arrow shoots up from the bottom of the screen, RISE climbs in, the arrow drifts around, then the logo flies into its exact place in the header. Skipped for repeat visits, other pages and reduced-motion users; a CSS fail-safe removes it if scripts fail. Verified in Chrome with frame captures. |
 | - | Server-side prices | Built. Fixes the old store where totals and promo codes were decided in the browser. |
 
 Verified: 45 automated tests against a real PostgreSQL (pricing rules, stock, accounts, 2-step login incl. lockout and

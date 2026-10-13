@@ -1,0 +1,44 @@
+/* Home-page intro overlay. Global (not page-scoped) because it lives in the root layout. */
+
+.intro-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20000;
+  background: #fff;
+  /* fail-safe: if scripts never run, the overlay still goes away */
+  animation: intro-failsafe 0.01s linear 7s forwards;
+}
+.intro-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.intro-logo {
+  height: min(52vh, 80vw);
+  width: auto;
+  overflow: visible;
+  transform-origin: center;
+}
+.intro-overlay .brand-logo-arrow {
+  transform: translateY(160vh);
+  transform-box: fill-box;
+  transform-origin: 50% 100%;
+}
+.intro-overlay .brand-logo-drift { transform-origin: 363px 300px; }
+.intro-overlay .brand-logo-letter { transform: translateY(110px); }
+
+/* the header logo stays hidden until the flying logo has landed on it */
+html:not(.no-intro):not(.intro-done) #header .brand-logo {
+  visibility: hidden;
+  animation: intro-logo-failsafe 0.01s linear 7s forwards;
+}
+.no-intro .intro-overlay { display: none; }
+
+@keyframes intro-failsafe { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+@keyframes intro-logo-failsafe { to { visibility: visible; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-overlay { display: none; }
+  html:not(.no-intro):not(.intro-done) #header .brand-logo { visibility: visible; animation: none; }
+}

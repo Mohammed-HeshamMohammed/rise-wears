@@ -1,22 +1,16 @@
-"use client";
+import { useId, type CSSProperties } from "react";
 
-import { useEffect, useId, useState } from "react";
-
+export const LOGO_VIEWBOX = { x: -12, y: -12, width: 750, height: 780 };
 const ARROW = "M363 0 L725 609 L363 352 L1 609 Z";
+// Horizontal extent of R, I, S, E inside logo.png (726x756).
 const LETTERS: [number, number][] = [[174, 254], [300, 319], [364, 445], [490, 565]];
 
-// The intro plays on a full page load only; later client-side navigations remount the header without replaying it.
-let introPlayed = false;
-
-export default function BrandLogo() {
+export default function BrandLogo({ className = "", clipArrow = true }: { className?: string; clipArrow?: boolean }) {
   const id = useId().replace(/[^a-zA-Z0-9_-]/g, "");
-  const [intro] = useState(() => typeof window === "undefined" || !introPlayed);
-  useEffect(() => {
-    introPlayed = true;
-  }, []);
+  const { x, y, width, height } = LOGO_VIEWBOX;
 
   return (
-    <svg viewBox="-12 -12 750 780" className={`brand-logo${intro ? " intro" : ""}`} role="img" aria-label="RISE">
+    <svg viewBox={`${x} ${y} ${width} ${height}`} className={`brand-logo ${className}`} role="img" aria-label="RISE">
       <defs>
         <clipPath id={`${id}-horizon`}>
           <rect x="-20" y="-60" width="770" height="676" />
@@ -27,14 +21,16 @@ export default function BrandLogo() {
           </clipPath>
         ))}
       </defs>
-      <g clipPath={`url(#${id}-horizon)`}>
-        <g className="brand-logo-lift">
-          <path className="brand-logo-arrow" d={ARROW} fill="#111" />
+      <g clipPath={clipArrow ? `url(#${id}-horizon)` : undefined}>
+        <g className="brand-logo-drift">
+          <g className="brand-logo-lift">
+            <path className="brand-logo-arrow" d={ARROW} fill="#111" />
+          </g>
         </g>
       </g>
       {LETTERS.map((_, i) => (
         <g clipPath={`url(#${id}-l${i})`} key={i}>
-          <image className="brand-logo-letter" style={{ "--i": i } as React.CSSProperties} href="/images/logo.png" width="726" height="756" />
+          <image className="brand-logo-letter" style={{ "--i": i } as CSSProperties} href="/images/logo.png" width="726" height="756" />
         </g>
       ))}
     </svg>
