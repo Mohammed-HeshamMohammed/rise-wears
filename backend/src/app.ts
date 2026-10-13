@@ -4,7 +4,7 @@ import express, { type NextFunction, type Request, type Response } from "express
 import helmet from "helmet";
 import { ZodError } from "zod";
 import { config } from "./config.js";
-import { HttpError } from "./lib/auth.js";
+import { HttpError } from "./lib/errors.js";
 import { accountRouter } from "./routes/account.js";
 import { adminRouter } from "./routes/admin.js";
 import { adminAuthRouter } from "./routes/adminAuth.js";

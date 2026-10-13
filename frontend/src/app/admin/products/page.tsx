@@ -10,10 +10,9 @@ export default function ProductsPage() {
 
   const toggle = (p: Product, patch: Partial<Product>) =>
     run(async () => {
-      const full = await adminApi.put<Product>(`/admin/products/${p.id}`, {
+      await adminApi.put(`/admin/products/${p.id}`, {
         ...p, categoryId: p.category?.id ?? null, collectionId: p.collection?.id ?? null, ...patch,
       });
-      void full;
       await reload();
     }, "Updated.");
 

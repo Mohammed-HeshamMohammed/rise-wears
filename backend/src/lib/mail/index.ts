@@ -19,7 +19,6 @@ function getTransport(): Transporter {
   return transport;
 }
 
-/** Tests swap in a capturing transport. */
 export function setTransport(t: Transporter | null) {
   transport = t;
 }
@@ -32,7 +31,6 @@ function track<T>(p: Promise<T>): Promise<T> {
   return p;
 }
 
-/** Resolves when every queued email has been sent or given up on. */
 export async function drainMail() {
   while (inFlight.size) await Promise.allSettled([...inFlight]);
 }
@@ -51,12 +49,12 @@ async function deliver(mail: Mail) {
   }
 }
 
-/** Fire and forget: a mail problem must never fail an order or a request. */
+// Fire and forget: a mail problem must never fail an order or a request.
 export function sendMail(mail: Mail | null) {
   if (mail) track(deliver(mail));
 }
 
-export async function loadMailOrder(orderId: number): Promise<MailOrder | null> {
+async function loadMailOrder(orderId: number): Promise<MailOrder | null> {
   const rows = await query(
     `SELECT o.order_number, o.status, o.customer_name, o.email, o.mobile, o.governorate, o.city, o.address, o.apartment, o.notes,
             o.user_id IS NOT NULL AS has_account, o.promo_code, o.subtotal_cents, o.discount_cents, o.shipping_cents, o.total_cents,

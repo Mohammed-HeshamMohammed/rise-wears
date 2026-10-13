@@ -5,7 +5,6 @@ import { usePathname, useRouter } from "next/navigation";
 import { useEffect, type ReactNode } from "react";
 import { useAuth } from "@/lib/auth";
 
-/** Sends logged-out visitors to the login page and shows the account sub-navigation. */
 export default function AccountGate({ children }: { children: ReactNode }) {
   const { user, loading, signOut } = useAuth();
   const router = useRouter();

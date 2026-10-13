@@ -51,7 +51,6 @@ const heading = (text: string) =>
 const paragraph = (html: string) =>
   `<p style="margin:0 0 16px;font-family:${BODY};font-size:15px;line-height:1.7;color:${MUTED};">${html}</p>`;
 
-/** The site's look: black promo strip, white header with logo, white card, black footer. */
 function layout(preheader: string, body: string): string {
   return `<!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">

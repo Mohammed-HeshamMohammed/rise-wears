@@ -5,13 +5,14 @@ import express, { Router } from "express";
 import { z } from "zod";
 import { config } from "../config.js";
 import { one, query, tx } from "../db.js";
-import { HttpError, requireAdmin } from "../lib/auth.js";
+import { requireAdmin } from "../lib/auth.js";
 import { GOVERNORATES } from "../lib/checkout.js";
+import { HttpError } from "../lib/errors.js";
 import { getProductById, listProducts } from "../lib/products.js";
 import { notifyOrderStatus } from "../lib/mail/index.js";
 import { notifyStorefront } from "../lib/revalidate.js";
 import { slugify } from "../lib/slug.js";
-import { restockOrder } from "./account.js";
+import { ORDER_STATUSES, STATUS_FLOW, restockOrder, type OrderStatus } from "../lib/orders.js";
 
 export const adminRouter = Router();
 adminRouter.use(requireAdmin);
@@ -27,8 +28,6 @@ const idParam = (v: unknown) => {
   return n;
 };
 
-/* ------------------------------ dashboard ------------------------------ */
-
 adminRouter.get("/stats", async (_req, res) => {
   const o = await one(
     `SELECT count(*)::int AS orders,
@@ -41,8 +40,6 @@ adminRouter.get("/stats", async (_req, res) => {
   const s = await one(`SELECT count(*)::int AS subscribers FROM newsletter_subscribers`);
   res.json({ ...o, revenueCents: Number(o.revenueCents), ...p, ...c, ...s });
 });
-
-/* ------------------------------ products ------------------------------ */
 
 const productSchema = z.object({
   name: z.string().trim().min(1).max(160),
@@ -135,8 +132,6 @@ adminRouter.delete("/products/:id", async (req, res) => {
   res.status(204).end();
 });
 
-/* ------------------------------ categories + collections ------------------------------ */
-
 const taxonomySchema = z.object({
   name: z.string().trim().min(1).max(80),
   slug: z.string().trim().max(80).optional(),
@@ -172,8 +167,6 @@ for (const table of ["categories", "collections"] as const) {
   });
 }
 
-/* ------------------------------ announcement bar ------------------------------ */
-
 const announcementSchema = z.object({
   text: z.string().trim().min(1).max(200),
   link: z.string().trim().max(300).default(""),
@@ -206,8 +199,6 @@ adminRouter.delete("/announcements/:id", async (req, res) => {
   await query("DELETE FROM announcements WHERE id = $1", [idParam(req.params.id)]);
   res.status(204).end();
 });
-
-/* ------------------------------ deals ------------------------------ */
 
 const dealSchema = z.object({
   name: z.string().trim().min(1).max(120),
@@ -262,8 +253,6 @@ adminRouter.delete("/deals/:id", async (req, res) => {
   res.status(204).end();
 });
 
-/* ------------------------------ promo codes ------------------------------ */
-
 const promoSchema = z.object({
   code: z.string().trim().min(2).max(40).transform((s) => s.toUpperCase()),
   type: z.enum(["percent", "fixed"]),
@@ -306,8 +295,6 @@ adminRouter.delete("/promo-codes/:id", async (req, res) => {
   res.status(204).end();
 });
 
-/* ------------------------------ shipping ------------------------------ */
-
 adminRouter.get("/shipping-rates", async (_req, res) => {
   res.json(await query(`SELECT governorate, cost_cents AS "costCents" FROM shipping_rates ORDER BY governorate`));
 });
@@ -326,17 +313,6 @@ adminRouter.put("/shipping-rates", async (req, res) => {
   });
   res.json({ ok: true });
 });
-
-/* ------------------------------ orders ------------------------------ */
-
-const STATUS_FLOW: Record<string, string[]> = {
-  pending: ["confirmed", "canceled"],
-  confirmed: ["shipped", "canceled"],
-  shipped: ["delivered", "returned"],
-  delivered: ["returned"],
-  canceled: [],
-  returned: [],
-};
 
 const ORDER_LIST = `SELECT o.id, o.order_number AS "orderNumber", o.status, o.created_at AS "createdAt",
   o.customer_name AS "customerName", o.email, o.mobile, o.governorate, o.total_cents AS "totalCents",
@@ -372,7 +348,7 @@ adminRouter.get("/orders/:id", async (req, res) => {
 adminRouter.patch("/orders/:id/status", async (req, res) => {
   const { status, note } = z
     .object({
-      status: z.enum(["pending", "confirmed", "shipped", "delivered", "canceled", "returned"]),
+      status: z.enum(ORDER_STATUSES),
       note: z.string().max(300).default(""),
     })
     .parse(req.body);
@@ -380,7 +356,7 @@ adminRouter.patch("/orders/:id/status", async (req, res) => {
   await tx(async (db) => {
     const o = (await db.query("SELECT status FROM orders WHERE id = $1 FOR UPDATE", [id])).rows[0];
     if (!o) throw new HttpError(404, "Order not found");
-    if (!STATUS_FLOW[o.status]?.includes(status)) throw new HttpError(409, `Can't move an order from ${o.status} to ${status}.`);
+    if (!STATUS_FLOW[o.status as OrderStatus]?.includes(status)) throw new HttpError(409, `Can't move an order from ${o.status} to ${status}.`);
     if (status === "canceled") await restockOrder(db, id);
     await db.query("UPDATE orders SET status = $2 WHERE id = $1", [id, status]);
     await db.query("INSERT INTO order_status_history (order_id, status, note) VALUES ($1,$2,$3)", [id, status, note]);
@@ -388,8 +364,6 @@ adminRouter.patch("/orders/:id/status", async (req, res) => {
   void notifyOrderStatus(id);
   res.json({ ok: true, status });
 });
-
-/* ------------------------------ people + inbox ------------------------------ */
 
 adminRouter.get("/customers", async (_req, res) => {
   res.json(
@@ -413,8 +387,6 @@ adminRouter.get("/subscribers", async (req, res) => {
 adminRouter.get("/messages", async (_req, res) => {
   res.json(await query(`SELECT id, name, email, subject, message, created_at AS "createdAt" FROM contact_messages ORDER BY id DESC LIMIT 200`));
 });
-
-/* ------------------------------ image upload ------------------------------ */
 
 function sniffImage(b: Buffer): "jpg" | "png" | "webp" | null {
   if (b.length > 12 && b[0] === 0xff && b[1] === 0xd8 && b[2] === 0xff) return "jpg";

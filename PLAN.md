@@ -4,7 +4,7 @@ Rebuild of `https://rise-wear.store` as a full-stack project. The design is copi
 everything behind it: accounts, orders, an admin dashboard with two-step login, and SEO/AEO.
 Setup and deployment steps are in [README.md](README.md).
 
-## Status (2026-10-13)
+## Status (updated 2026-10-13)
 
 | # | Requirement | Status |
 |---|---|---|
@@ -13,13 +13,17 @@ Setup and deployment steps are in [README.md](README.md).
 | 3 | SEO / AEO / XML | Built: sitemap.xml (with images), robots.txt allowing search + AI crawlers, llms.txt, llms-full.txt, Google Merchant XML feed, JSON-LD (Organization, WebSite, ItemList, Product, Offer, BreadcrumbList, FAQPage), canonical + Open Graph, 301s from old URLs. Search Console / Bing / Merchant Center registration is a go-live step. |
 | 4 | Admin dashboard with 2-step auth | Built: products (images, sizes, stock, visibility, featured), categories, collections, deals, promo codes, announcement bar, shipping rates, orders + status, customers, subscribers, messages. Login + admin role + authenticator code on every session; changes appear on the site immediately. |
 | 5 | Profile and order lists (Canceled, Delivered…) | Built: profile, saved addresses, orders by status. |
+| 6 | Emails styled like the site | Built: order confirmation, owner alert, status updates (confirmed, shipped, delivered, canceled, returned), contact-form forward, newsletter welcome. SMTP, retried twice, never blocks an order, HTML-escaped. Needs the mailbox password to send for real. Preview: `npm run mail:preview`. |
 | - | Design copied from current store | Built: original CSS reused, scoped per page so every page renders like the original. |
 | - | Server-side prices | Built. Fixes the old store where totals and promo codes were decided in the browser. |
 
-Verified: 36 automated tests against a real PostgreSQL (pricing rules, stock, accounts, 2-step login incl. lockout and
-code replay, admin actions, uploads), production build of both apps, and a browser click-through
+Verified: 45 automated tests against a real PostgreSQL (pricing rules, stock, accounts, 2-step login incl. lockout and
+code replay, admin actions, uploads, emails), production build of both apps, and a browser click-through
 (browse → cart → checkout → order → login → account → admin enrolment → dashboard edit → storefront update).
-**Not verified yet:** real Firebase login (no Firebase project exists yet) and deployment on Hostinger.
+**Not verified yet:** real Firebase login (no Firebase project exists yet), sending through the real Hostinger mailbox, and deployment on Hostinger.
+
+### Code health
+Compiler checks for unused code are on in both projects. Comments were reduced to the ones explaining a non-obvious reason; shared constants (governorates, order statuses, errors, order helpers) live in one place each; generated CSS and the auto-written Next agent file are no longer committed (CSS is rebuilt before dev and build).
 
 ## Decisions
 
@@ -64,7 +68,7 @@ Firebase Auth issues login tokens; the backend verifies them on every request.
 
 1. Firebase project + production env values (owner).
 2. Deploy to Hostinger and point DNS; first test is a Node.js app on the plan.
-3. Order emails (customer confirmation, owner alert). Needs an email provider.
+3. Create the `inquiries@rise-wear.store` mailbox in Hostinger and set the SMTP variables so emails go out.
 4. Import past orders and subscribers from the old PHP storage, if wanted.
 5. Search Console, Bing Webmaster, Merchant Center registration after launch.
 6. Optional: online payments (Paymob), Arabic/RTL.

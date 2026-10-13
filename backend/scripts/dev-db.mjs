@@ -1,5 +1,3 @@
-// Local PostgreSQL for development - no Docker needed. Data persists in backend/.pgdata
-// Usage: npm run db:local   (leave it running), then npm run migrate && npm run seed
 import { existsSync } from "node:fs";
 import EmbeddedPostgres from "embedded-postgres";
 

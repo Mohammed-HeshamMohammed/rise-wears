@@ -14,10 +14,7 @@ import "@/styles/generated/account.css";
 
 export type PageName = "home" | "shop" | "product" | "cart" | "checkout" | "about" | "contact" | "account";
 
-/**
- * Wraps a page in its own `.pg-<name>` scope (see scripts/build-css.mjs) with the shared header and footer,
- * so each page renders exactly like its stylesheet-per-page original.
- */
+// Scopes the page's CSS under `.pg-<name>` (see scripts/build-css.mjs) so it renders like the original per-page stylesheets.
 export default async function PageShell({ page, children }: { page: PageName; children: ReactNode }) {
   const announcements = await getAnnouncements();
   return (

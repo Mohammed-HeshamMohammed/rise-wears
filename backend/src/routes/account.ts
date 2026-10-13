@@ -1,14 +1,14 @@
 import { Router } from "express";
 import { z } from "zod";
-import { one, query, tx, type Db } from "../db.js";
-import { HttpError, requireAuth } from "../lib/auth.js";
+import { one, query, tx } from "../db.js";
+import { requireAuth } from "../lib/auth.js";
 import { GOVERNORATES } from "../lib/checkout.js";
+import { HttpError } from "../lib/errors.js";
 import { notifyOrderStatus } from "../lib/mail/index.js";
+import { ORDER_STATUSES, restockOrder } from "../lib/orders.js";
 
 export const accountRouter = Router();
 accountRouter.use("/me", requireAuth);
-
-/* ------------------------------ profile ------------------------------ */
 
 accountRouter.get("/me", (req, res) => {
   const u = req.user!;
@@ -24,8 +24,6 @@ accountRouter.put("/me", async (req, res) => {
   ]);
   res.json(row);
 });
-
-/* ------------------------------ addresses ------------------------------ */
 
 const addressSchema = z.object({
   label: z.string().trim().min(1).max(40).default("Home"),
@@ -80,8 +78,6 @@ accountRouter.delete("/me/addresses/:id", async (req, res) => {
   res.status(204).end();
 });
 
-/* ------------------------------ orders ------------------------------ */
-
 const ORDER_COLS = `o.id, o.order_number AS "orderNumber", o.status, o.created_at AS "createdAt",
   o.customer_name AS "customerName", o.email, o.mobile, o.governorate, o.city, o.address, o.apartment, o.notes,
   o.promo_code AS "promoCode", o.subtotal_cents AS "subtotalCents", o.discount_cents AS "discountCents",
@@ -92,14 +88,12 @@ const ITEMS_AGG = `COALESCE((SELECT json_agg(json_build_object('productId', i.pr
   'slug', (SELECT slug FROM products WHERE id = i.product_id)) ORDER BY i.id)
   FROM order_items i WHERE i.order_id = o.id), '[]') AS items`;
 
-const STATUSES = ["pending", "confirmed", "shipped", "delivered", "canceled", "returned"] as const;
-
 accountRouter.get("/me/orders", async (req, res) => {
   const status = typeof req.query.status === "string" ? req.query.status : "";
   const params: unknown[] = [req.user!.id];
   let where = "o.user_id = $1";
   if (status) {
-    if (!(STATUSES as readonly string[]).includes(status)) throw new HttpError(400, "Unknown status");
+    if (!(ORDER_STATUSES as readonly string[]).includes(status)) throw new HttpError(400, "Unknown status");
     params.push(status);
     where += " AND o.status = $2";
   }
@@ -118,7 +112,6 @@ accountRouter.get("/me/orders/:orderNumber", async (req, res) => {
   res.json(row);
 });
 
-/** Customers can cancel their own order only while it is still pending. */
 accountRouter.post("/me/orders/:orderNumber/cancel", async (req, res) => {
   const result = await tx(async (db) => {
     const o = (
@@ -136,13 +129,3 @@ accountRouter.post("/me/orders/:orderNumber/cancel", async (req, res) => {
   void notifyOrderStatus(result.id);
   res.json({ status: result.status });
 });
-
-export async function restockOrder(db: Db, orderId: number) {
-  const items = (await db.query("SELECT product_id, size, quantity FROM order_items WHERE order_id = $1", [orderId])).rows;
-  for (const it of items) {
-    if (it.product_id == null) continue;
-    await db.query("UPDATE product_variants SET stock = stock + $1 WHERE product_id = $2 AND size = $3", [
-      it.quantity, it.product_id, it.size,
-    ]);
-  }
-}

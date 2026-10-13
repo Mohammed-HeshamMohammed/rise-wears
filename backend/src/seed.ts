@@ -1,8 +1,4 @@
-/**
- * Seeds the data that exists on the current rise-wear.store: 4 products, categories,
- * collections, shipping rates, the announcement, the buy-2 offer and the 4 promo codes.
- * Safe to re-run: existing rows are left untouched (stock is never overwritten).
- */
+// Idempotent: existing rows are left untouched, stock is never overwritten.
 import { fileURLToPath } from "node:url";
 import { migrate } from "./migrate.js";
 import { pool, tx } from "./db.js";
@@ -71,7 +67,7 @@ export async function seed() {
         [p.slug, p.legacy, p.sku, p.name, p.subtitle, p.color, p.desc, p.weight, p.price, cat, col],
       );
       const id = ins.rows[0]?.id;
-      if (!id) continue; // already seeded
+      if (!id) continue;
       for (let n = 1; n <= p.images; n++) {
         await db.query("INSERT INTO product_images (product_id, url, alt, sort_order) VALUES ($1,$2,$3,$4)", [
           id, `/images/products/${p.legacy}/${n}.jpg`, `${p.name} image ${n}`, n,

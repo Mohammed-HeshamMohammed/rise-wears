@@ -1,10 +1,9 @@
 import { z } from "zod";
 
 try {
-  // Node >= 20.12. On hosts without it, env vars must come from the platform panel.
   (process as unknown as { loadEnvFile?: () => void }).loadEnvFile?.();
 } catch {
-  /* no .env file - fine */
+  // no .env file: variables come from the hosting panel
 }
 
 const bool = z
@@ -24,7 +23,6 @@ const schema = z.object({
   ADMIN_EMAILS: z.string().optional().default(""),
   UPLOAD_DIR: z.string().default("uploads"),
   PUBLIC_API_URL: z.string().default("http://localhost:4000"),
-  // Optional: the storefront's refresh endpoint, so dashboard changes show up immediately.
   REVALIDATE_URL: z.string().optional().default(""),
   REVALIDATE_SECRET: z.string().optional().default(""),
   SITE_URL: z.string().default("https://rise-wear.store"),

@@ -5,9 +5,8 @@ import { use, useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatDate, formatPrice } from "@/lib/format";
+import { STATUS_LABEL } from "@/lib/orders";
 import type { Order } from "@/lib/types";
-
-const LABEL: Record<string, string> = { pending: "Pending", confirmed: "Confirmed", shipped: "Shipped", delivered: "Delivered", canceled: "Canceled", returned: "Returned" };
 
 export default function OrderDetailPage({ params }: { params: Promise<{ orderNumber: string }> }) {
   const { orderNumber } = use(params);
@@ -57,7 +56,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
               <div>
                 <b>{order.orderNumber}</b> <span className="meta">· placed {formatDate(order.createdAt)}</span>
               </div>
-              <span className={`status ${order.status}`}>{LABEL[order.status]}</span>
+              <span className={`status ${order.status}`}>{STATUS_LABEL[order.status]}</span>
             </div>
             <div className="order-lines">
               {order.items.map((it, i) => (
@@ -120,7 +119,7 @@ export default function OrderDetailPage({ params }: { params: Promise<{ orderNum
             <ul className="timeline">
               {order.history?.map((h, i) => (
                 <li key={i}>
-                  <b>{LABEL[h.status]}</b>
+                  <b>{STATUS_LABEL[h.status]}</b>
                   <small>
                     {formatDate(h.createdAt)}
                     {h.note ? ` · ${h.note}` : ""}

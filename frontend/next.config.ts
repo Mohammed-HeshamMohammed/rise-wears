@@ -1,9 +1,9 @@
 import type { NextConfig } from "next";
 
-// Old store URLs -> new clean URLs, so existing Google rankings and bookmarks keep working.
-// (/product?id=... and /product.html?id=... are handled by route handlers: src/app/product*/route.ts)
+// Old store URLs keep working (301). /product?id=... is handled by src/app/product*/route.ts.
 const nextConfig: NextConfig = {
   poweredByHeader: false,
+  agentRules: false,
   async redirects() {
     return [
       { source: "/home", destination: "/", permanent: true },

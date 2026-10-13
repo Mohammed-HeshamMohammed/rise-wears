@@ -4,3 +4,5 @@ next-env.d.ts
 .env
 .env.local
 tsconfig.tsbuildinfo
+src/styles/generated
+AGENTS.md

@@ -1,12 +1,5 @@
-/**
- * Server-side pricing. The browser never decides prices, discounts or shipping.
- * All amounts are integer piastres.
- *
- * Rules (copied from the live store):
- *  - Automatic offer: buy N, the cheapest item of every complete group of N+1 gets P% off.
- *  - Offer and promo codes never combine: if the offer applies, only the offer is used.
- *  - A discount can never take the total below the shipping cost.
- */
+// All amounts are integer piastres. The offer and promo codes never combine (the offer wins),
+// and a discount can never take the total below the shipping cost. Rules mirror the live store.
 
 export interface PricedLine {
   productId: number;
@@ -17,14 +10,12 @@ export interface PricedLine {
 export interface DealRule {
   buyQty: number;
   discountPercent: number;
-  /** empty = applies to all products */
   productIds: number[];
 }
 
 export interface PromoRule {
   code: string;
   type: "percent" | "fixed";
-  /** percent, or piastres when type is fixed */
   value: number;
 }
 

@@ -7,11 +7,9 @@ export const egp = (cents: number) => (cents / 100).toLocaleString("en-EG", { mi
 export const toCents = (v: string | number) => Math.round(Number(v) * 100);
 export const fromCents = (c: number | null | undefined) => (c == null ? "" : String(c / 100));
 export const dateTime = (iso: string) => new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
-/** ISO -> value for <input type="datetime-local"> */
 export const toLocalInput = (iso: string | null) => (iso ? new Date(new Date(iso).getTime() - new Date(iso).getTimezoneOffset() * 60000).toISOString().slice(0, 16) : "");
 export const fromLocalInput = (v: string) => (v ? new Date(v).toISOString() : null);
 
-/** Loads an admin endpoint and lets the page reload it after a change. */
 export function useAdminData<T>(path: string | null) {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState("");

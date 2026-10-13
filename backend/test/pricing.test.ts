@@ -9,7 +9,6 @@ describe("buy 2 get 50% off the 3rd", () => {
     expect(offerDiscount([line(1, 100_00, 2)], deal)).toBe(0);
   });
   it("halves the cheapest of 3 items", () => {
-    // 1199.99 + 1399.99 + 1299.99 -> cheapest 1199.99 -> 599.995 -> rounds to 60000 piastres
     const d = offerDiscount([line(1, 119999, 1), line(2, 139999, 1), line(3, 129999, 1)], deal);
     expect(d).toBe(Math.round(119999 / 2));
   });

@@ -1,11 +1,5 @@
-// Builds one self-contained stylesheet per page into src/styles/generated/.
-//
-// The live store loads a different set of stylesheets on every page, and several pages reuse the same
-// class names (.product-grid, .container, ...). To keep every page pixel-identical to the live store even
-// after client-side navigation, each page's CSS is scoped under `:where(.pg-<page>)`. `:where()` adds no
-// specificity, so the cascade order between main/header/page/footer/responsive stays exactly as before.
-//
-// Usage: npm run css      (re-run after editing anything in src/styles/original or src/styles/own)
+// Builds one stylesheet per page into src/styles/generated/, scoping the original per-page CSS under
+// `:where(.pg-<page>)` so pages that reuse class names don't clash. `:where()` adds no specificity.
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -14,11 +8,9 @@ import postcss from "postcss";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..", "src", "styles");
 const read = (dir, name) => readFileSync(join(root, dir, `${name}.css`), "utf8");
 
-// html / body / :root / * rules stay global (they are identical on every page).
 const GLOBAL = /^(html|body|:root|\*)([\s.:#[,>+~]|$)/;
 
 function scope(css, cls) {
-  // images live in /public/images; make url()s absolute so the bundler does not try to resolve them
   css = css.replaceAll(/url\((["']?)\.\.\/images\//g, (_m, q) => `url(${q}/images/`);
   const tree = postcss.parse(css);
   tree.walkRules((rule) => {
@@ -33,7 +25,6 @@ function scope(css, cls) {
   return tree.toString();
 }
 
-// [page, source dir of its own stylesheet]
 const pages = [
   ["home", "original"], ["shop", "original"], ["product", "original"], ["cart", "original"],
   ["checkout", "original"], ["about", "original"], ["contact", "original"],

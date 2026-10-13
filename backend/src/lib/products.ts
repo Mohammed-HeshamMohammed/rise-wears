@@ -1,6 +1,5 @@
 import { query, one } from "../db.js";
 
-/** One product as JSON, shaped for the storefront and the admin dashboard. */
 const PRODUCT_SELECT = `
   SELECT p.id, p.slug, p.legacy_id AS "legacyId", p.sku, p.name, p.subtitle, p.color, p.description,
          p.material, p.weight, p.fit, p.care,

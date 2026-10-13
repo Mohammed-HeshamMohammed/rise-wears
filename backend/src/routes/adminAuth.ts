@@ -4,8 +4,9 @@ import { authenticator } from "otplib";
 import QRCode from "qrcode";
 import { z } from "zod";
 import { one, query } from "../db.js";
-import { HttpError, requireAdminRole, requireAuth, signAdminSession } from "../lib/auth.js";
+import { requireAdminRole, requireAuth, signAdminSession } from "../lib/auth.js";
 import { decrypt, encrypt, generateBackupCode, sha256 } from "../lib/crypto.js";
+import { HttpError } from "../lib/errors.js";
 
 authenticator.options = { window: 1 };
 
@@ -19,10 +20,7 @@ adminAuthRouter.use(
   requireAdminRole,
 );
 
-/**
- * Accepts a code only if it is valid AND from a newer 30s step than the last one used,
- * so a code seen over someone's shoulder (or in logs) can't be used twice.
- */
+// A code is accepted once: it must belong to a newer 30s step than the last one used.
 async function consumeCode(userId: number, secret: string, code: string, lastStep: number): Promise<boolean> {
   const delta = authenticator.checkDelta(code, secret);
   if (delta === null) return false;
@@ -70,13 +68,11 @@ async function registerFailure(userId: number, row: TotpRow): Promise<never> {
 const clearFailures = (userId: number) =>
   query("UPDATE users SET totp_failed_attempts = 0, totp_locked_until = NULL WHERE id = $1", [userId]);
 
-/** Does the admin need to enrol an authenticator app, or just enter a code? */
 adminAuthRouter.get("/status", async (req, res) => {
   const row = await loadTotp(req.user!.id);
   res.json({ enrolled: !!row?.totp_enabled });
 });
 
-/** Step 1 of enrolment: create a secret and return a QR code to scan. */
 adminAuthRouter.post("/setup", async (req, res) => {
   const row = await loadTotp(req.user!.id);
   if (row?.totp_enabled) throw new HttpError(409, "Two-step verification is already set up.");
@@ -86,7 +82,6 @@ adminAuthRouter.post("/setup", async (req, res) => {
   res.json({ otpauth, qr: await QRCode.toDataURL(otpauth), secret });
 });
 
-/** Step 2 of enrolment: confirm with a first code, receive one-time backup codes. */
 adminAuthRouter.post("/setup/confirm", async (req, res) => {
   const { code } = z.object({ code: z.string().regex(/^\d{6}$/) }).parse(req.body);
   const row = await loadTotp(req.user!.id);
@@ -104,7 +99,6 @@ adminAuthRouter.post("/setup/confirm", async (req, res) => {
   res.json({ session: signAdminSession(req.user!.id), backupCodes });
 });
 
-/** Every later login: a 6-digit code (or a single-use backup code) opens the dashboard. */
 adminAuthRouter.post("/verify", async (req, res) => {
   const { code } = z.object({ code: z.string().trim().min(6).max(12) }).parse(req.body);
   const row = await loadTotp(req.user!.id);

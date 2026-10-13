@@ -33,6 +33,7 @@ npm run dev                 # http://localhost:3000
 the 27 governorate shipping rates, the "buy 2 get 50% off the 3rd" deal, the 4 promo codes and the announcement bar.
 
 Tests (real PostgreSQL, no mocks): `cd backend && npm test`. Type checks: `npm run typecheck` in each folder.
+The page stylesheets in `frontend/src/styles/generated` are built from `styles/original` automatically before `dev` and `build`.
 
 ## What is where
 

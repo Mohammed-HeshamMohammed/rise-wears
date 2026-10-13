@@ -7,7 +7,6 @@ export const pool = new pg.Pool({
   max: 10,
 });
 
-/** Anything with a pg-style query(): the pool or a transaction client. */
 export interface Db {
   query(text: string, params?: unknown[]): Promise<{ rows: any[] }>;
 }

@@ -3,7 +3,7 @@ import { config } from "../config.js";
 
 const key = () => Buffer.from(config.TOTP_ENCRYPTION_KEY, "hex");
 
-/** AES-256-GCM. Output: base64(iv | tag | ciphertext) */
+// AES-256-GCM, stored as base64(iv | tag | ciphertext)
 export function encrypt(plain: string): string {
   const iv = randomBytes(12);
   const cipher = createCipheriv("aes-256-gcm", key(), iv);

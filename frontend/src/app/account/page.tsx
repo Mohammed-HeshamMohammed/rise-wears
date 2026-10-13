@@ -3,6 +3,7 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
+import { GOVERNORATES } from "@/lib/governorates";
 
 interface Address {
   id: number;
@@ -14,12 +15,6 @@ interface Address {
   mobile: string;
   isDefault: boolean;
 }
-
-const GOVERNORATES = [
-  "Cairo", "Alexandria", "Port Said", "Suez", "Giza", "Damietta", "Dakahlia", "Sharkia", "Qalyubia", "Kafr el-Sheikh",
-  "Gharbia", "Menoufia", "El-Beheira", "Ismailia", "Bani Suef", "Fayoum", "Minya", "Asyut", "Sohag", "Qena", "Luxor",
-  "Aswan", "The Red Sea", "The New Valley", "Matrouh", "North Sinai", "South Sinai",
-];
 
 const blank = { label: "Home", governorate: "Cairo", city: "", address: "", apartment: "", mobile: "", isDefault: false };
 

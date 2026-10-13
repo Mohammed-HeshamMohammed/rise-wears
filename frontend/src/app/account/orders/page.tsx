@@ -5,18 +5,10 @@ import { useEffect, useState } from "react";
 import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { formatDate, formatPrice } from "@/lib/format";
+import { STATUSES, STATUS_LABEL } from "@/lib/orders";
 import type { Order, OrderStatus } from "@/lib/types";
 
-const STATUS_LABEL: Record<OrderStatus, string> = {
-  pending: "Pending",
-  confirmed: "Confirmed",
-  shipped: "Shipped",
-  delivered: "Delivered",
-  canceled: "Canceled",
-  returned: "Returned",
-};
-
-const FILTERS: ("all" | OrderStatus)[] = ["all", "pending", "confirmed", "shipped", "delivered", "canceled", "returned"];
+const FILTERS: ("all" | OrderStatus)[] = ["all", ...STATUSES];
 
 export default function OrdersPage() {
   const { user } = useAuth();

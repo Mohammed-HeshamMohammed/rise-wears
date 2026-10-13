@@ -1,10 +1,8 @@
 import { getProducts } from "@/lib/api";
-import { SITE_URL } from "@/lib/format";
-import { formatPrice } from "@/lib/format";
+import { SITE_URL, formatPrice } from "@/lib/format";
 
 export const revalidate = 3600;
 
-/** llms.txt: a plain-text map of the site for AI assistants (ChatGPT, Gemini, Claude, Perplexity...). */
 export async function GET() {
   const products = await getProducts();
   const body = `# RISE

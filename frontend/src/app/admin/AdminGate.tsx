@@ -20,11 +20,7 @@ const NAV = [
   ["/admin/people", "Customers & inbox"],
 ] as const;
 
-/**
- * Three locks in front of every admin page:
- *  1. a normal login, 2. the account must have the admin role, 3. a 6-digit authenticator code
- * (the backend re-checks all three on every request).
- */
+// Three locks: a login, the admin role, and an authenticator code. The backend re-checks all three on every request.
 export default function AdminGate({ children }: { children: ReactNode }) {
   const { user, loading, signIn, signInWithGoogle, signOut } = useAuth();
   const [phase, setPhase] = useState<Phase>("checking");

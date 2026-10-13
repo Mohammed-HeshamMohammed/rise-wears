@@ -2,10 +2,7 @@ import { config } from "../config.js";
 
 let timer: NodeJS.Timeout | undefined;
 
-/**
- * Tells the storefront to drop its cached pages (debounced, fire-and-forget).
- * Without this, dashboard edits would show up after the page cache expires (up to 60s).
- */
+// Dashboard edits would otherwise show up only after the page cache expires (up to 60s).
 export function notifyStorefront() {
   if (!config.REVALIDATE_URL || !config.REVALIDATE_SECRET) return;
   clearTimeout(timer);

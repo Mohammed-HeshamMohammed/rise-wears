@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { Db } from "../db.js";
-import { HttpError } from "./auth.js";
+import { HttpError } from "./errors.js";
 import { computeTotals, type DealRule, type PromoRule, type Totals } from "./pricing.js";
 
 export const GOVERNORATES = [
@@ -41,7 +41,6 @@ export interface Quote extends Totals {
   deal: { name: string; buyQty: number; discountPercent: number } | null;
 }
 
-/** Merge duplicate product+size rows so one cart can't dodge stock checks. */
 function mergeItems(items: z.infer<typeof cartItemSchema>[]) {
   const map = new Map<string, z.infer<typeof cartItemSchema>>();
   for (const it of items) {
@@ -75,10 +74,7 @@ export async function loadPromo(db: Db, code: string): Promise<{ promo: PromoRul
   return { promo: { code: p.code, type: p.type, value: p.value }, message: null };
 }
 
-/**
- * Prices a cart from database values only. With `lock` it also row-locks the
- * variants (FOR UPDATE) so the caller can decrement stock inside the same transaction.
- */
+// With `lock`, variants are row-locked so the caller can decrement stock in the same transaction.
 export async function buildQuote(db: Db, input: z.infer<typeof quoteSchema>, lock = false): Promise<Quote> {
   const items = mergeItems(input.items);
   const lines: QuoteLine[] = [];

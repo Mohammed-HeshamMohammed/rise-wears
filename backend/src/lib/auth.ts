@@ -4,6 +4,7 @@ import { cert, getApps, initializeApp } from "firebase-admin/app";
 import { getAuth } from "firebase-admin/auth";
 import { config } from "../config.js";
 import { one } from "../db.js";
+import { HttpError } from "./errors.js";
 
 export interface AppUser {
   id: number;
@@ -18,15 +19,6 @@ export interface AppUser {
 declare module "express-serve-static-core" {
   interface Request {
     user?: AppUser;
-  }
-}
-
-export class HttpError extends Error {
-  constructor(
-    public status: number,
-    message: string,
-  ) {
-    super(message);
   }
 }
 
@@ -46,7 +38,6 @@ function firebaseAuth() {
 }
 
 async function verifyToken(token: string): Promise<Identity> {
-  // Dev/test shortcut. config.ts refuses to boot in production with this enabled.
   if (config.AUTH_DEV_MODE && config.NODE_ENV !== "production" && token.startsWith("dev:")) {
     const [, uid, email] = token.split(":");
     if (!uid || !email) throw new HttpError(401, "Bad dev token");
@@ -87,7 +78,6 @@ function bearer(req: Request): string | null {
   return h?.startsWith("Bearer ") ? h.slice(7) : null;
 }
 
-/** Attaches req.user when a valid token is sent; continues anonymously otherwise. */
 export async function optionalAuth(req: Request, _res: Response, next: NextFunction) {
   try {
     const token = bearer(req);
@@ -121,7 +111,6 @@ export function signAdminSession(userId: number): string {
   });
 }
 
-/** Admin API gate: valid login + admin role + completed second factor. */
 export async function requireAdmin(req: Request, res: Response, next: NextFunction) {
   await requireAuth(req, res, (err?: unknown) => {
     if (err) return next(err);

@@ -36,7 +36,6 @@ export function CartProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     setItems(read());
     setHydrated(true);
-    // One-time carry-over of a cart left in the browser by the old store.
     (async () => {
       try {
         const raw = localStorage.getItem(LEGACY_KEY);
@@ -51,9 +50,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
           if (p && o.size && o.quantity > 0) migrated.push({ productId: p.id, size: o.size, quantity: Math.min(20, o.quantity) });
         }
         if (migrated.length) setItems((cur) => merge(cur, migrated));
-      } catch {
-        /* ignore: customer just starts with an empty bag */
-      }
+      } catch {}
     })();
     const onStorage = (e: StorageEvent) => e.key === KEY && setItems(read());
     window.addEventListener("storage", onStorage);

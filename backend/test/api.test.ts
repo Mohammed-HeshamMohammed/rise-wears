@@ -10,7 +10,7 @@ const app = createApp();
 const api = () => request(app);
 const as = (uid: string, email = `${uid}@example.com`) => ({ Authorization: `Bearer dev:${uid}:${email}` });
 const adminAuth = as("admin1", "admin@rise.test");
-// A valid code for the current 30s step (+n steps ahead). Used codes can never be reused, so tests step forward.
+// A used code can't be reused, so tests ask for codes from later 30s steps.
 const codeAt = (secret: string, steps = 0) => authenticator.clone({ epoch: Date.now() + steps * 30_000 }).generate(secret);
 
 const customer = {
@@ -117,7 +117,7 @@ describe("orders and accounts", () => {
     const before = await stockOf("rise-black-sweatshirt", "M");
     const res = await api().post("/api/orders").send(order([line("rise-black-sweatshirt", "M"), line("rise-black-hoodie", "S")]));
     expect(res.status).toBe(409);
-    expect(await stockOf("rise-black-sweatshirt", "M")).toBe(before); // first line rolled back
+    expect(await stockOf("rise-black-sweatshirt", "M")).toBe(before);
   });
 
   it("validates customer details", async () => {
@@ -143,7 +143,6 @@ describe("orders and accounts", () => {
     expect(guest.status).toBe(201);
     const mine = await api().get("/api/me/orders").set(as("later"));
     expect(mine.body.map((o: any) => o.orderNumber)).toContain(guest.body.orderNumber);
-    // a different account does not get it
     expect((await api().get("/api/me/orders").set(as("someone-else"))).body).toHaveLength(0);
   });
 
@@ -205,7 +204,6 @@ describe("admin two-step login", () => {
     expect(res.status).toBe(200);
     expect(res.body.products).toBe(4);
     expect((await api().get("/api/admin/stats").set({ ...adminAuth, "X-Admin-Session": "garbage" })).status).toBe(401);
-    // a session minted for a different user must not work
     const other = as("admin2", "admin@rise.test");
     expect((await api().get("/api/admin/stats").set({ ...other, "X-Admin-Session": session })).status).toBe(401);
   });
@@ -215,7 +213,6 @@ describe("admin two-step login", () => {
     const v = await api().post("/api/admin/auth/verify").set(adminAuth).send({ code: fresh });
     expect(v.status).toBe(200);
     expect(v.body.session).toBeTruthy();
-    // the same code must not work twice (replay protection)
     expect((await api().post("/api/admin/auth/verify").set(adminAuth).send({ code: fresh })).status).toBe(401);
     const code = backup[0]!;
     expect((await api().post("/api/admin/auth/verify").set(adminAuth).send({ code })).status).toBe(200);
@@ -223,7 +220,7 @@ describe("admin two-step login", () => {
   });
 
   it("locks after 5 wrong codes", async () => {
-    // failures accumulate until a success, so start this test from a clean counter
+    // failures accumulate until a success
     await pool.query("UPDATE users SET totp_failed_attempts = 0 WHERE email = 'admin@rise.test'");
     for (let i = 0; i < 5; i++) {
       expect((await api().post("/api/admin/auth/verify").set(adminAuth).send({ code: "111111" })).status).toBe(401);
@@ -252,7 +249,6 @@ describe("admin two-step login", () => {
       const dup = await api().post("/api/admin/products").set(h).send({ name: "Rise Cap", sku: "RISE-CAP-002", priceCents: 1, sizes: [] });
       expect(dup.body.slug).toBe("rise-cap-2");
       expect((await api().get("/api/products?category=accessories")).body).toHaveLength(1);
-      // hide it -> disappears from the public API but not from admin
       await api().put(`/api/admin/products/${p.body.id}`).set(h).send({ ...p.body, priceCents: 39900, images: p.body.images, sizes: p.body.sizes, active: false }).expect(200);
       expect((await api().get("/api/products/rise-cap")).status).toBe(404);
       expect((await api().get(`/api/admin/products/${p.body.id}`).set(h)).body.active).toBe(false);
@@ -275,7 +271,7 @@ describe("admin two-step login", () => {
       const deals = (await api().get("/api/admin/deals").set(h)).body;
       await api().put(`/api/admin/deals/${deals[0].id}`).set(h).send({ ...deals[0], active: false }).expect(200);
       const three = await api().post("/api/checkout/quote").send({ items: [{ productId: bySlug("rise-black-hoodie").id, size: "L", quantity: 3 }] });
-      expect(three.body.discountCents).toBe(0); // offer switched off in the dashboard
+      expect(three.body.discountCents).toBe(0);
       await api().put(`/api/admin/deals/${deals[0].id}`).set(h).send({ ...deals[0], active: true }).expect(200);
     });
 
@@ -290,7 +286,6 @@ describe("admin two-step login", () => {
       await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "confirmed" }).expect(200);
       await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "canceled", note: "customer called" }).expect(200);
       expect(await stockOf("rise-black-sweatpants", "XL")).toBe(before);
-      // canceled is final
       expect((await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "confirmed" })).status).toBe(409);
       const detail = (await api().get(`/api/admin/orders/${row.id}`).set(h)).body;
       expect(detail.history.map((x: any) => x.status)).toEqual(["pending", "confirmed", "canceled"]);

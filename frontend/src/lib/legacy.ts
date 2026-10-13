@@ -1,6 +1,5 @@
 import { getProducts } from "./api";
 
-/** /product?id=blackhoodie (old store) -> 301 /products/rise-black-hoodie, with no leftover query string. */
 export async function legacyProductRedirect(req: Request) {
   const url = new URL(req.url);
   const id = url.searchParams.get("id") ?? "";

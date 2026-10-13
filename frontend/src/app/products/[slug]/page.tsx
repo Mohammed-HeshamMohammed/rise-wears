@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-/** Plain-language answers shown on the page AND sent as FAQPage data, so AI assistants can quote them. */
+// Shown on the page and sent as FAQPage data, so search and AI assistants can quote the answers.
 function faqFor(p: Product) {
   const out: { q: string; a: string }[] = [];
   if (p.fit) out.push({ q: `How does the ${p.name} fit?`, a: `The ${p.name} has an ${p.fit.toLowerCase()} fit. Check the size chart on this page to pick your size.` });

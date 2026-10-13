@@ -1,7 +1,6 @@
 import { timingSafeEqual } from "node:crypto";
 import { revalidatePath } from "next/cache";
 
-/** Called by the backend after dashboard changes so the public site updates immediately. */
 export async function POST(req: Request) {
   const expected = process.env.REVALIDATE_SECRET;
   const given = req.headers.get("x-revalidate-secret") ?? "";

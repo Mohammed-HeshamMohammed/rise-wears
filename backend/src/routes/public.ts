@@ -2,7 +2,8 @@ import { Router } from "express";
 import rateLimit from "express-rate-limit";
 import { z } from "zod";
 import { one, pool, query, tx } from "../db.js";
-import { HttpError, optionalAuth } from "../lib/auth.js";
+import { optionalAuth } from "../lib/auth.js";
+import { HttpError } from "../lib/errors.js";
 import { buildQuote, GOVERNORATES, loadPromo, quoteSchema } from "../lib/checkout.js";
 import { getProductBySlug, listProducts } from "../lib/products.js";
 import { notifyContact, notifyNewsletter, notifyOrderPlaced } from "../lib/mail/index.js";
@@ -11,8 +12,6 @@ import { notifyStorefront } from "../lib/revalidate.js";
 export const publicRouter = Router();
 
 const writeLimiter = rateLimit({ windowMs: 15 * 60_000, limit: 30, standardHeaders: true, legacyHeaders: false });
-
-/* ------------------------------ catalogue ------------------------------ */
 
 publicRouter.get("/products", async (req, res) => {
   const q = req.query;
@@ -50,8 +49,6 @@ publicRouter.get("/shipping-rates", async (_req, res) => {
 publicRouter.get("/governorates", (_req, res) => {
   res.json(GOVERNORATES);
 });
-
-/* ------------------------------ quote + order ------------------------------ */
 
 publicRouter.post("/checkout/quote", async (req, res) => {
   const input = quoteSchema.parse(req.body);
@@ -128,8 +125,6 @@ publicRouter.post("/orders", writeLimiter, optionalAuth, async (req, res) => {
     shippingCents: result.quote.shippingCents,
   });
 });
-
-/* ------------------------------ newsletter + contact ------------------------------ */
 
 publicRouter.post("/newsletter", writeLimiter, async (req, res) => {
   const { email } = z.object({ email: z.email().max(200) }).parse(req.body);

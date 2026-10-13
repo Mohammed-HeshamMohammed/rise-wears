@@ -24,7 +24,6 @@ export interface SessionUser {
 interface AuthCtx {
   user: SessionUser | null;
   loading: boolean;
-  /** false when neither Firebase nor the local dev login is set up */
   available: boolean;
   signIn(email: string, password: string): Promise<void>;
   signUp(name: string, email: string, password: string): Promise<void>;

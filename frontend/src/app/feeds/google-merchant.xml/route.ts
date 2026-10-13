@@ -5,7 +5,6 @@ export const revalidate = 3600;
 
 const esc = (s: string) => s.replace(/[<>&'"]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '"': "&quot;" })[c]!);
 
-/** Google Merchant Center product feed (RSS 2.0 + g: namespace). Submit this URL in Merchant Center. */
 export async function GET() {
   const products = await getProducts();
   const items = products

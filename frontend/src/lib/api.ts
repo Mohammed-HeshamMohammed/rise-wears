@@ -1,7 +1,6 @@
 import type { Announcement, Product } from "./types";
 
 const PUBLIC_API = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
-// On the server we may reach the API over a private address.
 const BASE = typeof window === "undefined" ? (process.env.API_URL || PUBLIC_API).replace(/\/$/, "") : PUBLIC_API;
 
 export class ApiError extends Error {
@@ -15,7 +14,6 @@ export class ApiError extends Error {
 
 type TokenGetter = () => Promise<string | null>;
 let tokenGetter: TokenGetter = async () => null;
-/** AuthProvider registers how to get the current login token. */
 export const setTokenGetter = (fn: TokenGetter) => {
   tokenGetter = fn;
 };
@@ -44,11 +42,8 @@ export const adminSession = {
 interface Opts {
   method?: string;
   body?: unknown;
-  /** attach the customer/admin login token */
   auth?: boolean;
-  /** also attach the admin 2-step session */
   admin?: boolean;
-  /** raw body (image upload) */
   raw?: { data: Blob; type: string };
   revalidate?: number;
 }
@@ -92,8 +87,7 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
   return data as T;
 }
 
-/* ---- server-side helpers used by pages (never throw: a down API must not take pages down) ---- */
-
+// Page helpers return empty data instead of throwing, so a down API doesn't take pages down.
 export async function getProducts(query = ""): Promise<Product[]> {
   try {
     return await api<Product[]>(`/products${query}`, { revalidate: 60 });

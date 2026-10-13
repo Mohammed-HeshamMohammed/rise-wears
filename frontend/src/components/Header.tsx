@@ -5,7 +5,7 @@ import { useCart } from "@/lib/cart";
 import type { Announcement } from "@/lib/types";
 
 function Ticker({ items }: { items: Announcement[] }) {
-  // Same markup as the live store: two identical groups so the CSS marquee loops seamlessly.
+  // Two identical groups so the CSS marquee loops seamlessly.
   const group = [...items, ...items].map((a, i) =>
     a.link ? (
       <span key={i}>

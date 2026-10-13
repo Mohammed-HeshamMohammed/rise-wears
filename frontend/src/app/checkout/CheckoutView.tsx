@@ -7,13 +7,8 @@ import { api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { useCart } from "@/lib/cart";
 import { formatPrice } from "@/lib/format";
+import { GOVERNORATES } from "@/lib/governorates";
 import type { Quote } from "@/lib/types";
-
-const GOVERNORATES = [
-  "Cairo", "Alexandria", "Port Said", "Suez", "Giza", "Damietta", "Dakahlia", "Sharkia", "Qalyubia", "Kafr el-Sheikh",
-  "Gharbia", "Menoufia", "El-Beheira", "Ismailia", "Bani Suef", "Fayoum", "Minya", "Asyut", "Sohag", "Qena", "Luxor",
-  "Aswan", "The Red Sea", "The New Valley", "Matrouh", "North Sinai", "South Sinai",
-];
 
 export default function CheckoutView() {
   const router = useRouter();
@@ -32,7 +27,6 @@ export default function CheckoutView() {
 
   const set = (k: keyof typeof form) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [k]: e.target.value }));
 
-  // Prefill from the customer's saved profile and default address.
   useEffect(() => {
     if (!user) return;
     (async () => {
@@ -49,9 +43,7 @@ export default function CheckoutView() {
           address: f.address || a?.address || "",
           apartment: f.apartment || a?.apartment || "",
         }));
-      } catch {
-        /* prefill is a nicety only */
-      }
+      } catch {}
     })();
   }, [user]);
 
