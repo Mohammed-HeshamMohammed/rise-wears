@@ -47,7 +47,8 @@
     align-items: center;
 }
 
-.logo img {
+.logo img,
+.logo svg {
     height: 55px;
 
     width: auto;
@@ -55,7 +56,8 @@
     transition: .3s ease;
 }
 
-.logo:hover img {
+.logo:hover img,
+.logo:hover svg {
     transform: scale(1.03);
 }
 

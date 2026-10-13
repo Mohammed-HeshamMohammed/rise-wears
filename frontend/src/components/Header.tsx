@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
+import BrandLogo from "./BrandLogo";
 import type { Announcement } from "@/lib/types";
 
 function Ticker({ items }: { items: Announcement[] }) {
@@ -35,7 +36,7 @@ export default function Header({ announcements }: { announcements: Announcement[
         {announcements.length > 0 && <Ticker items={announcements} />}
         <div className="container navbar">
           <Link href="/" className="logo">
-            <img src="/images/logo.png" alt="Rise Logo" />
+            <BrandLogo />
           </Link>
           <nav>
             <ul className="nav-links">

@@ -48,7 +48,8 @@
 
     }
 
-    .logo img{
+    .logo img,
+    .logo svg {
 
         height:65px;
 
@@ -132,7 +133,8 @@
 
     }
 
-    .logo img{
+    .logo img,
+    .logo svg {
 
         height:55px;
 
