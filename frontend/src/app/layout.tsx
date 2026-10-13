@@ -1,10 +1,8 @@
 import type { Metadata, Viewport } from "next";
 import type { ReactNode } from "react";
-import IntroOverlay from "@/components/IntroOverlay";
 import JsonLd from "@/components/JsonLd";
 import Providers from "@/components/Providers";
 import { SITE_URL } from "@/lib/format";
-import "./intro.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -52,7 +50,7 @@ const organization = {
 
 export default function RootLayout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -62,14 +60,8 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" />
         <JsonLd data={organization} />
-        <script
-          dangerouslySetInnerHTML={{
-            __html: "try{if(sessionStorage.getItem(\"rise-intro\")||location.pathname!==\"/\")document.documentElement.classList.add(\"no-intro\")}catch(e){}",
-          }}
-        />
       </head>
       <body>
-        <IntroOverlay />
         <Providers>{children}</Providers>
         {process.env.NEXT_PUBLIC_GA_ID && (
           <>

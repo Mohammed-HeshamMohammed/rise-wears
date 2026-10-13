@@ -56,3 +56,9 @@
 .brand-logo { display: block; overflow: visible; }
 .brand-logo-lift { transition: transform .35s cubic-bezier(.2, .9, .3, 1.3); }
 .logo:hover .brand-logo-lift { transform: translateY(-10px); }
+.brand-logo.intro .brand-logo-arrow { transform: translateY(640px); animation: brand-rise 1.05s cubic-bezier(.16, .9, .25, 1.12) .1s forwards; }
+.brand-logo.intro .brand-logo-letter { transform: translateY(110px); animation: brand-rise .7s cubic-bezier(.16, .9, .25, 1) forwards; animation-delay: calc(.95s + var(--i) * .1s); }
+@keyframes brand-rise { to { transform: none; } }
+@media (prefers-reduced-motion: reduce) {
+  .brand-logo.intro .brand-logo-arrow, .brand-logo.intro .brand-logo-letter { animation: none; transform: none; }
+}
