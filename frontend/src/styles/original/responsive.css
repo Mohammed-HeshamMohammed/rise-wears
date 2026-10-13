@@ -1,0 +1,372 @@
+/* ===========================================
+   RISE - RESPONSIVE.CSS
+=========================================== */
+
+/* ===========================================
+   LARGE LAPTOPS
+=========================================== */
+
+@media (max-width: 1400px){
+
+    .container{
+        width:92%;
+    }
+
+}
+
+/* ===========================================
+   LAPTOP
+=========================================== */
+
+@media (max-width:1200px){
+
+    h1{
+        font-size:5rem;
+    }
+
+    h2{
+        font-size:2.5rem;
+    }
+
+    .featured-content{
+        padding:70px;
+    }
+
+}
+
+/* ===========================================
+   TABLET
+=========================================== */
+
+@media (max-width:992px){
+
+    /* NAVBAR */
+
+    .nav-links{
+
+        gap:25px;
+
+    }
+
+    .logo img{
+
+        height:65px;
+
+    }
+
+    /* HERO */
+
+    .hero h1{
+
+        font-size:5rem;
+
+    }
+
+    .hero-description{
+
+        max-width:500px;
+
+    }
+
+    /* FEATURED */
+
+    .featured{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .featured-image{
+
+        height:500px;
+
+    }
+
+    .featured-content{
+
+        text-align:center;
+
+        align-items:center;
+
+    }
+
+    /* PRODUCTS */
+
+    .product-grid{
+
+        grid-template-columns:repeat(2,1fr);
+
+    }
+
+    /* WHY RISE */
+
+    .why-rise .container{
+
+        grid-template-columns:1fr;
+
+    }
+
+    /* FOOTER */
+
+    .footer-grid{
+
+        grid-template-columns:1fr;
+
+        gap:50px;
+
+    }
+
+}
+
+/* ===========================================
+   MOBILE
+=========================================== */
+
+@media (max-width:768px){
+
+    /* HEADER */
+
+    .navbar{
+
+        height:75px;
+
+    }
+
+    .logo img{
+
+        height:55px;
+
+    }
+
+    /* Hide navigation for now */
+
+    .nav-links{
+
+        display:none;
+
+    }
+
+    /* HERO */
+
+    .hero{
+
+        padding:0 25px;
+
+    }
+
+    .hero h1{
+
+        font-size:3.8rem;
+
+        letter-spacing:5px;
+
+    }
+
+    .hero-slogan{
+
+        font-size:1rem;
+
+        letter-spacing:4px;
+
+    }
+
+    .hero-description{
+
+        font-size:1rem;
+
+    }
+
+    .hero .btn{
+
+        width:100%;
+
+        max-width:280px;
+
+    }
+
+    /* STATEMENT */
+
+    .statement{
+
+        padding:100px 20px;
+
+    }
+
+    .statement h2{
+
+        font-size:2.8rem;
+
+    }
+
+    /* FEATURED */
+
+    .featured-image{
+
+        height:400px;
+
+    }
+
+    .featured-content{
+
+        padding:50px 25px;
+
+    }
+
+    .featured-content h2{
+
+        font-size:3rem;
+
+    }
+
+    /* PRODUCTS */
+
+    .products{
+
+        padding:100px 0;
+
+    }
+
+    .product-grid{
+
+        grid-template-columns:1fr;
+
+    }
+
+    /* WHY RISE */
+
+    .feature-card{
+
+        padding:40px 25px;
+
+    }
+
+    /* QUOTE */
+
+    .quote{
+
+        padding:120px 20px;
+
+    }
+
+    .quote h2{
+
+        font-size:4rem;
+
+        letter-spacing:4px;
+
+    }
+
+    /* NEWSLETTER */
+
+/* NEWSLETTER */
+
+.newsletter {
+    padding: 80px 20px;
+}
+
+.newsletter .container {
+    width: 100%;
+}
+
+.newsletter form {
+    flex-direction: column;
+    gap: 12px;
+}
+
+.newsletter form input,
+.newsletter form button {
+    width: 100%;
+    min-width: 0;
+}
+
+.newsletter form input {
+    height: 56px;
+    border-right: 1px solid #111;
+}
+
+.newsletter form button {
+    flex: none;
+    height: 56px;
+}
+
+    /* FOOTER */
+
+    .copyright{
+
+        flex-direction:column;
+
+        gap:15px;
+
+        text-align:center;
+
+    }
+
+}
+
+/* ===========================================
+   SMALL MOBILE
+=========================================== */
+
+@media (max-width:480px){
+
+    h1{
+
+        font-size:3rem;
+
+    }
+
+    h2{
+
+        font-size:2.2rem;
+
+    }
+
+    h3{
+
+        font-size:1.6rem;
+
+    }
+
+    .hero{
+
+        min-height:90vh;
+
+    }
+
+    .hero-description{
+
+        font-size:.95rem;
+
+    }
+
+    .featured-image{
+
+        height:300px;
+
+    }
+
+    .featured-content{
+
+        padding:40px 20px;
+
+    }
+
+    .statement h2{
+
+        font-size:2.2rem;
+
+    }
+
+    .quote h2{
+
+        font-size:3rem;
+
+    }
+
+    .footer-logo{
+
+        width:90px;
+
+    }
+
+}

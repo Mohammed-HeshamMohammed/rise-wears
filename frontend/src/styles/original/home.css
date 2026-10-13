@@ -1,0 +1,671 @@
+/* ===========================================
+   RISE - HOME.CSS
+=========================================== */
+
+
+/* ===========================================
+   HERO
+=========================================== */
+
+.hero{
+
+    position:relative;
+
+    height:100vh;
+
+    background:url("../images/hero/hero.jpg")
+        center center/cover no-repeat;
+
+    display:flex;
+
+    justify-content:center;
+
+    align-items:center;
+
+    overflow:hidden;
+
+}
+
+.hero-overlay{
+
+    position:absolute;
+
+    inset:0;
+
+    background:rgba(0,0,0,.45);
+
+}
+
+.hero-content{
+
+    position:relative;
+
+    z-index:5;
+
+    text-align:center;
+
+    color:white;
+
+    max-width:850px;
+
+}
+
+.hero h1{
+
+    font-size:8rem;
+
+    letter-spacing:10px;
+
+    margin-bottom:10px;
+
+}
+
+.hero-slogan{
+
+    font-size:1.3rem;
+
+    letter-spacing:6px;
+
+    text-transform:uppercase;
+
+    color:#dddddd;
+
+    margin-bottom:30px;
+
+}
+
+.hero-description{
+
+    color:white;
+
+    font-size:1.2rem;
+
+    max-width:600px;
+
+    margin:auto;
+
+    margin-bottom:45px;
+
+    line-height:1.8;
+
+}
+
+.hero .btn{
+
+    min-width:220px;
+
+}
+
+
+/* ===========================================
+   BRAND STATEMENT
+=========================================== */
+
+.statement{
+
+    background:#111;
+
+    color:white;
+
+    padding:140px 0;
+
+    text-align:center;
+
+}
+
+.statement h2{
+
+    font-size:4rem;
+
+    margin-bottom:25px;
+
+}
+
+.statement p{
+
+    color:#cccccc;
+
+    max-width:700px;
+
+    margin:auto;
+
+    font-size:1.1rem;
+
+}
+
+
+/* ===========================================
+   FEATURED COLLECTION
+=========================================== */
+
+.featured{
+
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    min-height:750px;
+
+}
+
+.featured-image{
+
+    overflow:hidden;
+
+}
+
+.featured-image img{
+
+    width:100%;
+
+    height:100%;
+
+    object-fit:cover;
+
+    transition:.6s ease;
+
+}
+
+.featured:hover img{
+
+    transform:scale(1.05);
+
+}
+
+.featured-content{
+
+    display:flex;
+
+    flex-direction:column;
+
+    justify-content:center;
+
+    padding:100px;
+
+}
+
+.featured-content h2{
+
+    font-size:4rem;
+
+    margin-bottom:20px;
+
+}
+
+.featured-content p{
+
+    margin-bottom:40px;
+
+    max-width:500px;
+
+}
+
+
+/* ===========================================
+   PRODUCTS
+=========================================== */
+
+.products{
+
+    padding:140px 0;
+
+}
+
+.products h2{
+
+    text-align:center;
+
+    margin-bottom:70px;
+
+}
+
+
+/* ===========================================
+   HOMEPAGE PRODUCT GRID
+=========================================== */
+
+.products .product-grid{
+
+    display:grid;
+
+    grid-template-columns:repeat(4, minmax(0, 1fr));
+
+    gap:50px 25px;
+
+}
+
+
+/* ===========================================
+   PRODUCT CARD
+=========================================== */
+
+.products .product-card{
+
+    display:block;
+
+    width:100%;
+
+    max-width:300px;
+
+    margin:0 auto;
+
+    text-decoration:none;
+
+    color:#111;
+
+    transition:.35s ease;
+
+}
+
+.products .product-card img{
+
+    width:100%;
+
+    height:auto;
+
+    aspect-ratio:4 / 5;
+
+    object-fit:contain;
+
+    display:block;
+
+    background:#f7f7f7;
+
+    transition:.4s ease;
+
+}
+
+.products .product-card:hover{
+
+    transform:translateY(-8px);
+
+}
+
+.products .product-card:hover img{
+
+    transform:scale(1.03);
+
+}
+
+.products .product-card h3{
+
+    margin-top:20px;
+
+    font-size:1.4rem;
+
+    line-height:1.2;
+
+}
+
+.products .product-card span{
+
+    display:block;
+
+    margin-top:8px;
+
+    font-size:1rem;
+
+    color:#666;
+
+    font-weight:600;
+
+}
+
+
+/* ===========================================
+   WHY RISE
+=========================================== */
+
+.why-rise{
+
+    background:#f5f5f5;
+
+    padding:140px 0;
+
+}
+
+.why-rise .container{
+
+    display:grid;
+
+    grid-template-columns:repeat(3,1fr);
+
+    gap:35px;
+
+}
+
+.feature-card{
+
+    background:white;
+
+    padding:60px 40px;
+
+    text-align:center;
+
+    transition:.35s;
+
+    border:1px solid #e5e5e5;
+
+}
+
+.feature-card:hover{
+
+    transform:translateY(-10px);
+
+    box-shadow:0 20px 40px rgba(0,0,0,.08);
+
+}
+
+.feature-card h3{
+
+    margin-bottom:20px;
+
+}
+
+.feature-card p{
+
+    color:#777;
+
+}
+
+
+/* ===========================================
+   QUOTE
+=========================================== */
+
+.quote{
+
+    padding:220px 20px;
+
+    background:white;
+
+    text-align:center;
+
+}
+
+.quote h2{
+
+    font-size:9rem;
+
+    line-height:.9;
+
+    letter-spacing:8px;
+
+}
+
+
+/* ===========================================
+   NEWSLETTER
+=========================================== */
+
+.newsletter{
+
+    background:#111;
+
+    color:white;
+
+    text-align:center;
+
+    padding:140px 20px;
+
+}
+
+.newsletter h2{
+
+    margin-bottom:20px;
+
+}
+
+.newsletter p{
+
+    color:#cfcfcf;
+
+    max-width:650px;
+
+    margin:auto;
+
+    margin-bottom:50px;
+
+}
+
+.newsletter form{
+
+    max-width:650px;
+
+    margin:auto;
+
+    display:flex;
+
+    gap:15px;
+
+}
+
+.newsletter input{
+
+    flex:1;
+
+    border:none;
+
+    padding:18px;
+
+}
+
+.newsletter button{
+
+    background:white;
+
+    color:black;
+
+    border:none;
+
+    padding:18px 35px;
+
+    font-weight:700;
+
+    cursor:pointer;
+
+    transition:.3s;
+
+}
+
+.newsletter button:hover{
+
+    background:#dddddd;
+
+}
+
+
+/* ===========================================
+   RESPONSIVE
+=========================================== */
+
+
+/* ---------- TABLET / SMALL DESKTOP ---------- */
+
+@media(max-width:1100px){
+
+    .products .product-grid{
+
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+
+    }
+
+    .products .product-card{
+
+        max-width:280px;
+
+    }
+
+}
+
+
+/* ---------- TABLET ---------- */
+
+@media(max-width:800px){
+
+    .hero h1{
+
+        font-size:6rem;
+
+    }
+
+    .featured{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .featured-image{
+
+        min-height:500px;
+
+    }
+
+    .featured-content{
+
+        padding:70px 40px;
+
+    }
+
+    .products .product-grid{
+
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+
+        gap:45px 20px;
+
+    }
+
+    .products .product-card{
+
+        max-width:280px;
+
+    }
+
+    .why-rise .container{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .quote h2{
+
+        font-size:6rem;
+
+    }
+
+}
+
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:500px){
+
+    .hero{
+
+        min-height:700px;
+
+    }
+
+    .hero h1{
+
+        font-size:4.5rem;
+
+        letter-spacing:6px;
+
+    }
+
+    .hero-slogan{
+
+        font-size:1rem;
+
+        letter-spacing:4px;
+
+    }
+
+    .hero-description{
+
+        font-size:1rem;
+
+        padding:0 20px;
+
+    }
+
+    .statement{
+
+        padding:90px 20px;
+
+    }
+
+    .statement h2{
+
+        font-size:2.8rem;
+
+    }
+
+    .featured-content{
+
+        padding:60px 25px;
+
+    }
+
+    .featured-content h2{
+
+        font-size:3rem;
+
+    }
+
+    .products{
+
+        padding:90px 0;
+
+    }
+
+    .products h2{
+
+        margin-bottom:50px;
+
+    }
+
+    .products .product-grid{
+
+        grid-template-columns:1fr;
+
+        gap:50px;
+
+    }
+
+    .products .product-card{
+
+        max-width:360px;
+
+    }
+
+    .quote{
+
+        padding:150px 20px;
+
+    }
+
+    .quote h2{
+
+        font-size:4rem;
+
+        letter-spacing:4px;
+
+    }
+
+    .newsletter{
+
+        padding:100px 20px;
+
+    }
+
+    .newsletter form{
+
+        flex-direction:column;
+
+    }
+
+}

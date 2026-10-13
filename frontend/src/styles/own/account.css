@@ -1,0 +1,91 @@
+/* RISE account area (login, signup, profile, orders) - same visual language as checkout. */
+
+.auth-page, .acct-page { padding: 70px 0 110px; min-height: 60vh; }
+.auth-card { max-width: 440px; margin: 0 auto; padding: 0 20px; }
+.auth-card h1, .acct-page h1 { font-family: 'Bebas Neue', sans-serif; font-size: 48px; letter-spacing: 1px; line-height: 1.05; margin-bottom: 8px; }
+.auth-card .sub { color: #666; font-size: 14px; margin-bottom: 28px; }
+
+.field { margin-bottom: 18px; }
+.field label { display: block; font-size: 12px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; margin-bottom: 7px; }
+.field input, .field select, .field textarea {
+  width: 100%; padding: 14px 16px; border: 1px solid #ddd; background: #fff; font: inherit; font-size: 14px; border-radius: 0; outline: none;
+}
+.field input:focus, .field select:focus, .field textarea:focus { border-color: #111; }
+
+.auth-btn, .acct-btn {
+  display: inline-block; width: 100%; padding: 15px 22px; border: 1px solid #111; background: #111; color: #fff;
+  font: inherit; font-size: 13px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase; cursor: pointer; text-align: center; transition: .3s;
+}
+.auth-btn:hover, .acct-btn:hover { background: #fff; color: #111; }
+.auth-btn:disabled, .acct-btn:disabled { opacity: .5; cursor: not-allowed; }
+.acct-btn { width: auto; }
+.acct-btn.ghost, .auth-btn.ghost { background: #fff; color: #111; }
+.acct-btn.ghost:hover, .auth-btn.ghost:hover { background: #111; color: #fff; }
+.acct-btn.small { padding: 9px 16px; font-size: 11px; }
+.acct-btn.danger { border-color: #c00; color: #c00; background: #fff; }
+.acct-btn.danger:hover { background: #c00; color: #fff; }
+
+.auth-divider { display: flex; align-items: center; gap: 14px; margin: 22px 0; color: #999; font-size: 12px; text-transform: uppercase; letter-spacing: 1px; }
+.auth-divider::before, .auth-divider::after { content: ""; flex: 1; height: 1px; background: #e5e5e5; }
+.auth-links { margin-top: 22px; font-size: 14px; color: #666; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+.auth-links a { color: #111; text-decoration: underline; }
+.notice { padding: 12px 14px; font-size: 13px; margin-bottom: 18px; border: 1px solid #e5e5e5; background: #f5f5f5; }
+.notice.error { border-color: #f3c2c2; background: #fdf0f0; color: #a00; }
+.notice.success { border-color: #bfe3c8; background: #eefaf1; color: #137333; }
+
+.acct-head { display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: wrap; gap: 16px; margin-bottom: 26px; }
+.acct-head p { color: #666; font-size: 14px; }
+.acct-nav { display: flex; gap: 8px; border-bottom: 1px solid #e5e5e5; margin-bottom: 34px; }
+.acct-nav a { padding: 12px 18px; font-size: 13px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: #666; border-bottom: 2px solid transparent; margin-bottom: -1px; }
+.acct-nav a.active { color: #111; border-bottom-color: #111; }
+
+.acct-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+.acct-card { border: 1px solid #e5e5e5; padding: 26px; margin-bottom: 22px; background: #fff; }
+.acct-card h2 { font-family: 'Bebas Neue', sans-serif; font-size: 28px; letter-spacing: 1px; margin-bottom: 18px; }
+.acct-two { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+
+.addr { border: 1px solid #e5e5e5; padding: 16px 18px; margin-bottom: 12px; font-size: 14px; line-height: 1.55; }
+.addr strong { display: block; margin-bottom: 2px; }
+.addr .tag { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1px; background: #111; color: #fff; padding: 2px 8px; margin-left: 8px; vertical-align: middle; }
+.addr .row-actions { margin-top: 10px; display: flex; gap: 8px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.chip { padding: 8px 16px; border: 1px solid #ddd; background: #fff; font: inherit; font-size: 12px; font-weight: 600; letter-spacing: .5px; text-transform: uppercase; cursor: pointer; }
+.chip.active { background: #111; color: #fff; border-color: #111; }
+
+.order-card { border: 1px solid #e5e5e5; margin-bottom: 18px; background: #fff; }
+.order-card .order-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; padding: 16px 20px; border-bottom: 1px solid #eee; background: #fafafa; font-size: 14px; }
+.order-card .order-head b { font-size: 15px; }
+.order-card .meta { color: #666; font-size: 13px; }
+.order-lines { padding: 6px 20px; }
+.order-line { display: flex; align-items: center; gap: 14px; padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px; }
+.order-line:last-child { border-bottom: 0; }
+.order-line img { width: 56px; height: 64px; object-fit: cover; background: #f5f5f5; }
+.order-line .grow { flex: 1; }
+.order-line small { color: #666; display: block; }
+.order-card .order-foot { display: flex; justify-content: space-between; align-items: center; padding: 14px 20px; border-top: 1px solid #eee; font-size: 14px; }
+
+.status { display: inline-block; padding: 4px 11px; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; border-radius: 99px; }
+.status.pending { background: #fff4d6; color: #8a5a00; }
+.status.confirmed { background: #e3efff; color: #134a99; }
+.status.shipped { background: #ece4ff; color: #4b24a6; }
+.status.delivered { background: #e0f5e6; color: #137333; }
+.status.canceled { background: #fde6e6; color: #a00; }
+.status.returned { background: #eee; color: #444; }
+
+.timeline { list-style: none; margin: 8px 0 0; padding: 0; }
+.timeline li { position: relative; padding: 0 0 18px 24px; font-size: 14px; }
+.timeline li::before { content: ""; position: absolute; left: 0; top: 6px; width: 9px; height: 9px; border-radius: 50%; background: #111; }
+.timeline li::after { content: ""; position: absolute; left: 4px; top: 16px; bottom: 0; width: 1px; background: #ddd; }
+.timeline li:last-child::after { display: none; }
+.timeline small { color: #666; display: block; }
+
+.totals div { display: flex; justify-content: space-between; padding: 6px 0; font-size: 14px; }
+.totals .grand { border-top: 1px solid #eee; margin-top: 8px; padding-top: 12px; font-weight: 700; font-size: 16px; }
+.empty-state { text-align: center; padding: 60px 20px; border: 1px dashed #ddd; color: #666; }
+.empty-state h2 { font-family: 'Bebas Neue', sans-serif; font-size: 30px; color: #111; margin-bottom: 8px; }
+
+@media (max-width: 800px) {
+  .acct-grid, .acct-two { grid-template-columns: 1fr; gap: 14px; }
+  .auth-card h1, .acct-page h1 { font-size: 38px; }
+}
