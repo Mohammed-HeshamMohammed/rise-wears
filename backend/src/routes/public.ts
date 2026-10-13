@@ -5,6 +5,7 @@ import { one, pool, query, tx } from "../db.js";
 import { HttpError, optionalAuth } from "../lib/auth.js";
 import { buildQuote, GOVERNORATES, loadPromo, quoteSchema } from "../lib/checkout.js";
 import { getProductBySlug, listProducts } from "../lib/products.js";
+import { notifyContact, notifyNewsletter, notifyOrderPlaced } from "../lib/mail/index.js";
 import { notifyStorefront } from "../lib/revalidate.js";
 
 export const publicRouter = Router();
@@ -114,10 +115,11 @@ publicRouter.post("/orders", writeLimiter, optionalAuth, async (req, res) => {
     await db.query("INSERT INTO order_status_history (order_id, status, note) VALUES ($1,'pending','Order placed')", [
       order.id,
     ]);
-    return { orderNumber, quote };
+    return { orderId: order.id as number, orderNumber, quote };
   });
 
-  notifyStorefront(); // stock changed: refresh sold-out badges
+  notifyStorefront();
+  void notifyOrderPlaced(result.orderId);
   res.status(201).json({
     orderNumber: result.orderNumber,
     totalCents: result.quote.totalCents,
@@ -131,7 +133,8 @@ publicRouter.post("/orders", writeLimiter, optionalAuth, async (req, res) => {
 
 publicRouter.post("/newsletter", writeLimiter, async (req, res) => {
   const { email } = z.object({ email: z.email().max(200) }).parse(req.body);
-  await one("INSERT INTO newsletter_subscribers (email) VALUES ($1) ON CONFLICT DO NOTHING", [email.toLowerCase()]);
+  const added = await one("INSERT INTO newsletter_subscribers (email) VALUES ($1) ON CONFLICT DO NOTHING RETURNING id", [email.toLowerCase()]);
+  if (added) notifyNewsletter(email);
   res.status(201).json({ ok: true });
 });
 
@@ -147,5 +150,6 @@ publicRouter.post("/contact", writeLimiter, async (req, res) => {
   await query("INSERT INTO contact_messages (name, email, subject, message) VALUES ($1,$2,$3,$4)", [
     b.name, b.email, b.subject, b.message,
   ]);
+  notifyContact(b);
   res.status(201).json({ ok: true });
 });

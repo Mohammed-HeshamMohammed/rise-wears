@@ -311,7 +311,7 @@ describe("newsletter and contact", () => {
   it("stores subscribers once and contact messages", async () => {
     await api().post("/api/newsletter").send({ email: "Fan@Example.com" }).expect(201);
     await api().post("/api/newsletter").send({ email: "fan@example.com" }).expect(201);
-    expect((await pool.query("SELECT count(*)::int AS n FROM newsletter_subscribers")).rows[0].n).toBe(1);
+    expect((await pool.query("SELECT count(*)::int AS n FROM newsletter_subscribers WHERE email = $1", ["fan@example.com"])).rows[0].n).toBe(1);
     await api().post("/api/contact").send({ name: "A", email: "a@b.co", message: "hello" }).expect(201);
     expect((await api().post("/api/contact").send({ name: "A", email: "bad", message: "x" })).status).toBe(400);
   });

@@ -51,6 +51,20 @@ Tests (real PostgreSQL, no mocks): `cd backend && npm test`. Type checks: `npm r
 4. Lost phone and backup codes? Reset in the database:
    `UPDATE users SET totp_enabled=false, totp_secret_enc=NULL, backup_code_hashes='{}' WHERE email='...';`
 
+## Emails
+
+Sent from the API over SMTP, styled like the site (`npm run mail:preview` in `backend` writes samples to `backend/.mail-preview/`):
+
+| Email | To |
+|---|---|
+| Order confirmation | customer |
+| New order alert | owner (`OWNER_EMAIL`), reply goes to the customer |
+| Confirmed / shipped / delivered / canceled / returned | customer, when the status changes |
+| Contact form message | owner, reply goes to the sender |
+| Welcome | new newsletter subscriber |
+
+A mail failure is logged and retried twice; it never blocks an order. With `SMTP_HOST` empty (development) nothing is sent.
+
 ## Going live
 
 ### 1. Firebase (free)
@@ -64,7 +78,10 @@ Tests (real PostgreSQL, no mocks): `cd backend && npm test`. Type checks: `npm r
 Create a free PostgreSQL on [Neon](https://neon.tech) or [Supabase](https://supabase.com) and put the connection string
 (with `?sslmode=require`) in backend `DATABASE_URL`. Tables are created on API start (`migrate`). Run `npm run seed` once.
 
-### 3. Hosting (Hostinger Business → Node.js apps)
+### 3. Email
+Hostinger → Emails → create the mailbox `inquiries@rise-wear.store`, then set `SMTP_HOST=smtp.hostinger.com`, `SMTP_PORT=465`, `SMTP_USER` and `SMTP_PASS` on the API.
+
+### 4. Hosting (Hostinger Business → Node.js apps)
 Deploy two Node.js apps from this repo (GitHub import or ZIP):
 
 | App | Root dir | Build | Start | Domain |
@@ -81,7 +98,7 @@ Environment variables are set in hPanel for each app (see `.env.example` in each
 Uploaded product images are written to `UPLOAD_DIR` on the API server, so make sure that folder is on persistent storage.
 If the Node.js option is not available on the plan, the same code runs on any VPS.
 
-### 4. Search engines and AI
+### 5. Search engines and AI
 1. **Google Search Console**: add `https://rise-wear.store`, verify (set `NEXT_PUBLIC_GOOGLE_SITE_VERIFICATION` or DNS), submit `https://rise-wear.store/sitemap.xml`.
 2. **Bing Webmaster Tools** (also feeds ChatGPT search): import from Search Console, submit the sitemap.
 3. **Google Merchant Center**: add the product feed `https://rise-wear.store/feeds/google-merchant.xml` for free product listings.
@@ -90,7 +107,6 @@ If the Node.js option is not available on the plan, the same code runs on any VP
 6. Keep the old URLs reachable: `/home`, `/product?id=...`, `/shop.html` etc. already 301 to the new URLs.
 
 ## Known gaps
-- **No order emails yet** (confirmation to customer, alert to the owner). Needs an email provider (e.g. Resend, SMTP).
 - Payment is cash on delivery only, as on the live store.
 - The live store's `hero.jpg`, `collection.jpg`, `about-banner.jpg` and the 2nd-4th product photos return 404 today; they are
   missing here too. Product photos can be uploaded in the dashboard; the 3 page images go in `frontend/public/images/`.

@@ -8,6 +8,7 @@ import { one, query, tx } from "../db.js";
 import { HttpError, requireAdmin } from "../lib/auth.js";
 import { GOVERNORATES } from "../lib/checkout.js";
 import { getProductById, listProducts } from "../lib/products.js";
+import { notifyOrderStatus } from "../lib/mail/index.js";
 import { notifyStorefront } from "../lib/revalidate.js";
 import { slugify } from "../lib/slug.js";
 import { restockOrder } from "./account.js";
@@ -384,6 +385,7 @@ adminRouter.patch("/orders/:id/status", async (req, res) => {
     await db.query("UPDATE orders SET status = $2 WHERE id = $1", [id, status]);
     await db.query("INSERT INTO order_status_history (order_id, status, note) VALUES ($1,$2,$3)", [id, status, note]);
   });
+  void notifyOrderStatus(id);
   res.json({ ok: true, status });
 });
 

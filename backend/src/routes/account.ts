@@ -3,6 +3,7 @@ import { z } from "zod";
 import { one, query, tx, type Db } from "../db.js";
 import { HttpError, requireAuth } from "../lib/auth.js";
 import { GOVERNORATES } from "../lib/checkout.js";
+import { notifyOrderStatus } from "../lib/mail/index.js";
 
 export const accountRouter = Router();
 accountRouter.use("/me", requireAuth);
@@ -130,9 +131,10 @@ accountRouter.post("/me/orders/:orderNumber/cancel", async (req, res) => {
     await restockOrder(db, o.id);
     await db.query("UPDATE orders SET status = 'canceled' WHERE id = $1", [o.id]);
     await db.query("INSERT INTO order_status_history (order_id, status, note) VALUES ($1,'canceled','Canceled by customer')", [o.id]);
-    return { status: "canceled" };
+    return { id: o.id as number, status: "canceled" };
   });
-  res.json(result);
+  void notifyOrderStatus(result.id);
+  res.json({ status: result.status });
 });
 
 export async function restockOrder(db: Db, orderId: number) {

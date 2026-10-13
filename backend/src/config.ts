@@ -27,6 +27,13 @@ const schema = z.object({
   // Optional: the storefront's refresh endpoint, so dashboard changes show up immediately.
   REVALIDATE_URL: z.string().optional().default(""),
   REVALIDATE_SECRET: z.string().optional().default(""),
+  SITE_URL: z.string().default("https://rise-wear.store"),
+  SMTP_HOST: z.string().optional().default(""),
+  SMTP_PORT: z.coerce.number().default(465),
+  SMTP_USER: z.string().optional().default(""),
+  SMTP_PASS: z.string().optional().default(""),
+  MAIL_FROM: z.string().default("RISE <inquiries@rise-wear.store>"),
+  OWNER_EMAIL: z.string().default("inquiries@rise-wear.store"),
 });
 
 export const config = (() => {
