@@ -5,6 +5,7 @@ import { one, pool, query, tx } from "../db.js";
 import { optionalAuth } from "../lib/auth.js";
 import { HttpError } from "../lib/errors.js";
 import { buildQuote, GOVERNORATES, loadPromo, quoteSchema } from "../lib/checkout.js";
+import { getHero } from "../lib/hero.js";
 import { getProductBySlug, listProducts } from "../lib/products.js";
 import { notifyContact, notifyNewsletter, notifyOrderPlaced } from "../lib/mail/index.js";
 import { notifyStorefront } from "../lib/revalidate.js";
@@ -36,6 +37,10 @@ publicRouter.get("/categories", async (_req, res) => {
 
 publicRouter.get("/collections", async (_req, res) => {
   res.json(await query("SELECT id, name, slug FROM collections ORDER BY sort_order, id"));
+});
+
+publicRouter.get("/hero", async (_req, res) => {
+  res.json(await getHero());
 });
 
 publicRouter.get("/announcements", async (_req, res) => {

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import HeroSection from "@/components/HeroSection";
 import JsonLd from "@/components/JsonLd";
 import NewsletterForm from "@/components/NewsletterForm";
 import PageShell from "@/components/PageShell";
 import ProductCard from "@/components/ProductCard";
-import { getProducts } from "@/lib/api";
+import { getHero, getProducts } from "@/lib/api";
 import { SITE_URL, absoluteUrl } from "@/lib/format";
 
 export const metadata: Metadata = {
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
 export const revalidate = 60;
 
 export default async function HomePage() {
-  const featured = await getProducts("?featured=1");
+  const [featured, hero] = await Promise.all([getProducts("?featured=1"), getHero()]);
   return (
     <PageShell page="home">
       <JsonLd
@@ -34,17 +35,7 @@ export default async function HomePage() {
         }}
       />
 
-      <section className="hero">
-        <div className="hero-overlay"></div>
-        <div className="hero-content">
-          <h1>RISE</h1>
-          <p className="hero-slogan">RISE ABOVE</p>
-          <p className="hero-description">Built for those chasing the next level.</p>
-          <Link href="/shop" className="btn btn-light">
-            SHOP COLLECTION
-          </Link>
-        </div>
-      </section>
+      <HeroSection hero={hero.hero} offline={!hero.live} />
 
       <section className="statement" id="about">
         <div className="container">

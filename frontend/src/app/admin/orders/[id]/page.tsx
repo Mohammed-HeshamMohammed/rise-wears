@@ -2,18 +2,11 @@
 
 import Link from "next/link";
 import { use, useState } from "react";
-import { STATUS_LABEL } from "@/lib/orders";
+import { STATUSES, STATUS_LABEL } from "@/lib/orders";
 import type { OrderStatus } from "@/lib/types";
 import { Notice, Page, adminApi, dateTime, egp, useAdminData, useNotice } from "../../util";
 
-const NEXT: Record<string, string[]> = {
-  pending: ["confirmed", "canceled"],
-  confirmed: ["shipped", "canceled"],
-  shipped: ["delivered", "returned"],
-  delivered: ["returned"],
-  canceled: [],
-  returned: [],
-};
+const ADVANCE: Partial<Record<OrderStatus, OrderStatus>> = { pending: "confirmed", confirmed: "shipped", shipped: "delivered" };
 const PATH: OrderStatus[] = ["pending", "confirmed", "shipped", "delivered"];
 const whatsapp = (mobile: string) => `https://wa.me/${mobile.replace(/\D/g, "").replace(/^0/, "20")}`;
 
@@ -37,17 +30,22 @@ export default function OrderPage({ params }: { params: Promise<{ id: string }> 
   const { data: o, error, reload } = useAdminData<any>(`/admin/orders/${id}`);
   const { msg, run } = useNotice();
   const [note, setNote] = useState("");
+  const [pick, setPick] = useState("");
 
   if (error) return <Notice msg={{ kind: "error", text: error }} />;
   if (!o) return <p className="muted">Loading…</p>;
 
   const move = (status: string) =>
     run(async () => {
-      if ((status === "canceled" || status === "returned") && !confirm(`Mark this order as ${status}?${status === "canceled" ? " Stock will be returned to the shop." : ""}`)) throw new Error("Not changed.");
+      const warning = status === "canceled" ? " Stock will be returned to the shop." : o.status === "canceled" ? " Stock will be taken from the shop again." : "";
+      if (!confirm(`Change this order to ${status}?${warning}`)) throw new Error("Not changed.");
       await adminApi.patch(`/admin/orders/${id}/status`, { status, note });
       setNote("");
+      setPick("");
       await reload();
     }, `Order marked ${status}.`);
+
+  const next = ADVANCE[o.status as OrderStatus];
 
   return (
     <Page title={o.order_number} sub={`Placed ${dateTime(o.created_at)}`} action={<Link className="btn-a ghost" href="/admin/orders">← All orders</Link>}>
@@ -100,20 +98,21 @@ export default function OrderPage({ params }: { params: Promise<{ id: string }> 
         <div className="stack">
           <section className="card" style={{ marginBottom: 0 }}>
             <h2>Update status</h2>
-            {NEXT[o.status]?.length ? (
-              <>
-                <div className="f"><label htmlFor="note">Note (optional)</label><input id="note" type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Customer confirmed by phone" /></div>
-                <div className="flex">
-                  {NEXT[o.status]!.map((s) => (
-                    <button key={s} className={`btn-a${s === "canceled" || s === "returned" ? " danger" : ""}`} onClick={() => move(s)}>
-                      Mark {s}
-                    </button>
-                  ))}
-                </div>
-              </>
-            ) : (
-              <p className="muted" style={{ margin: 0 }}>This order is {o.status}. No further changes are possible.</p>
+            <p className="muted small" style={{ marginTop: 0 }}>Cash on delivery: payment is collected when the courier delivers, so you can move an order to any status, for example back to Shipped or to Canceled if the customer refuses it.</p>
+            <div className="f"><label htmlFor="note">Note (optional)</label><input id="note" type="text" value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Customer confirmed by phone" /></div>
+            {next && (
+              <div className="f"><button type="button" className="btn-a" onClick={() => move(next)}>Mark {next}{next === "delivered" ? " (cash collected)" : ""}</button></div>
             )}
+            <div className="f">
+              <label htmlFor="to">Set any status</label>
+              <div className="flex">
+                <select id="to" value={pick} onChange={(e) => setPick(e.target.value)} style={{ maxWidth: 220 }}>
+                  <option value="">Choose…</option>
+                  {STATUSES.filter((st) => st !== o.status).map((st) => (<option key={st} value={st}>{STATUS_LABEL[st]}</option>))}
+                </select>
+                <button type="button" className="btn-a ghost" disabled={!pick} onClick={() => move(pick)}>Change status</button>
+              </div>
+            </div>
           </section>
           <section className="card" style={{ marginBottom: 0 }}>
             <h2>History</h2>

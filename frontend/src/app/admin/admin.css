@@ -283,3 +283,50 @@ details.data[open] summary { margin-bottom: 8px; }
 
 .adm .divider { border-top: 1px solid var(--line); margin-top: 16px; padding-top: 16px; }
 .adm .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* hero editor */
+.hero-styles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.hero-style { text-align: left; font: inherit; color: var(--text); background: var(--surface); border: 2px solid var(--line); border-radius: var(--radius); padding: 10px; cursor: pointer; display: grid; gap: 4px; align-content: start; }
+.hero-style:hover { border-color: var(--line-strong); }
+.hero-style.on { border-color: var(--text); background: var(--surface-2); }
+.hero-style b { margin-top: 6px; font-size: 15px; }
+.hero-style span { color: var(--muted); font-size: 13px; line-height: 1.45; }
+.adm .sticky { position: sticky; top: 16px; }
+.adm .file-btn { margin: 0; cursor: pointer; text-transform: none; letter-spacing: 0; }
+.hp { position: relative; overflow: hidden; border-radius: 8px; background: #111; container-type: inline-size; aspect-ratio: 16 / 10; color: #fff; }
+.hp.phone { aspect-ratio: 9 / 16; max-width: 260px; margin: 0 auto; }
+.hp-img { position: absolute; inset: 0; background: center / cover no-repeat; }
+.hp-shade { position: absolute; inset: 0; background: rgba(0, 0, 0, var(--dim)); }
+.hp-text { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; padding: 6cqw; gap: 1.2cqw; }
+.hp-text b { font-family: var(--display); font-weight: 400; font-size: 14cqw; letter-spacing: .06em; line-height: 1; }
+.hp-text i { font-style: normal; font-size: 2.6cqw; letter-spacing: .3em; color: #ddd; text-transform: uppercase; }
+.hp-text p { margin: 0; font-size: 2.6cqw; max-width: 60%; line-height: 1.5; }
+.hp-text span { margin-top: 2cqw; background: #fff; color: #111; font-size: 2.2cqw; font-weight: 700; letter-spacing: .1em; padding: 1.4cqw 3cqw; }
+.hp.phone .hp-text b { font-size: 18cqw; }
+.hp.phone .hp-text i, .hp.phone .hp-text p { font-size: 5cqw; }
+.hp.phone .hp-text span { font-size: 4.4cqw; padding: 2.4cqw 5cqw; }
+.hp--edge .hp-shade { background: linear-gradient(to top, rgba(0, 0, 0, .75), rgba(0, 0, 0, calc(var(--dim) * .25)) 65%); }
+.hp--edge .hp-text { align-items: flex-start; justify-content: flex-end; text-align: left; }
+.hp--edge .hp-text p { max-width: 70%; }
+.hp--split { background: #f4f2ee; color: #111; }
+.hp--split .hp-img { left: 50%; }
+.hp--split .hp-shade { display: none; }
+.hp--split .hp-text { right: 50%; align-items: flex-start; text-align: left; }
+.hp--split .hp-text i { color: #555; }
+.hp--split .hp-text p { color: #333; max-width: 100%; }
+.hp--split .hp-text span { background: #111; color: #fff; }
+.hp--split.phone .hp-img { left: 0; bottom: 42%; }
+.hp--split.phone .hp-text { right: 0; top: 58%; justify-content: flex-start; }
+.hp--split.phone .hp-text b { font-size: 14cqw; }
+.img-pick { display: flex; gap: 14px; align-items: center; }
+.img-thumb { width: 84px; height: 56px; flex: none; border-radius: 6px; background: var(--surface-2) center / cover no-repeat; border: 1px solid var(--line); }
+@media (max-width: 900px) { .hero-styles { grid-template-columns: 1fr; } .adm .sticky { position: static; } }
+
+/* inline order status */
+.adm select.status-select { width: auto; min-width: 128px; padding: 5px 30px 5px 12px; border-radius: 99px; font-size: 12.5px; font-weight: 700; border: 1px solid transparent; cursor: pointer; background-color: var(--neutral-bg); color: var(--neutral); }
+.adm select.status-select.pending { background-color: var(--warning-bg); color: var(--warning); }
+.adm select.status-select.confirmed { background-color: var(--info-bg); color: var(--info); }
+.adm select.status-select.shipped { background-color: var(--violet-bg); color: var(--violet); }
+.adm select.status-select.delivered { background-color: var(--success-bg); color: var(--success); }
+.adm select.status-select.canceled { background-color: var(--danger-bg); color: var(--danger); }
+.adm select.status-select option { background: var(--surface); color: var(--text); }

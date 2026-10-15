@@ -1,3 +1,4 @@
+import { DEFAULT_HERO, type Hero } from "./hero";
 import { FALLBACK_ANNOUNCEMENTS, FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from "./fallback-catalog";
 import type { Announcement, Product } from "./types";
 
@@ -131,5 +132,13 @@ export async function getAnnouncements(): Promise<Announcement[]> {
     return await api<Announcement[]>("/announcements", { revalidate: 60 });
   } catch {
     return FALLBACK_ANNOUNCEMENTS;
+  }
+}
+
+export async function getHero(): Promise<{ hero: Hero; live: boolean }> {
+  try {
+    return { hero: await api<Hero>("/hero", { revalidate: 60 }), live: true };
+  } catch {
+    return { hero: DEFAULT_HERO, live: false };
   }
 }

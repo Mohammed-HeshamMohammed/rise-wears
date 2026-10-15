@@ -12,6 +12,7 @@ const ICONS: Record<string, string> = {
   products: "M20.6 13.4 13.4 20.6a2 2 0 0 1-2.8 0L2 12V2h10l8.6 8.6a2 2 0 0 1 0 2.8zM7 7h.01",
   categories: "m12 2 10 5-10 5L2 7zM2 12l10 5 10-5M2 17l10 5 10-5",
   deals: "M19 5 5 19M6.5 9a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM17.5 20a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
+  hero: "M3 3h18v18H3zM3 15l5-5 4 4 3-3 6 6",
   announce: "m3 11 18-8v18L3 13zM11.6 16.8a3 3 0 1 1-5.8-1.6",
   shipping: "M1 3h15v13H1zM16 8h4l3 3v5h-7zM5.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5zM18.5 21a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5z",
   store: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14 21 3",
@@ -34,7 +35,7 @@ const GROUPS: { label: string; items: [string, string, keyof typeof ICONS][] }[]
   { label: "Overview", items: [["/admin", "Dashboard", "dashboard"]] },
   { label: "Sales", items: [["/admin/orders", "Orders", "orders"], ["/admin/people", "Customers & inbox", "people"]] },
   { label: "Catalog", items: [["/admin/products", "Products", "products"], ["/admin/categories", "Categories", "categories"], ["/admin/deals", "Deals & promo codes", "deals"]] },
-  { label: "Store", items: [["/admin/announcements", "Announcement bar", "announce"], ["/admin/shipping", "Shipping rates", "shipping"]] },
+  { label: "Store", items: [["/admin/hero", "Home page hero", "hero"], ["/admin/announcements", "Announcement bar", "announce"], ["/admin/shipping", "Shipping rates", "shipping"]] },
 ];
 
 const THEME_KEY = "rise-admin-theme";

@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useMemo, useState } from "react";
 import { STATUS_LABEL, STATUSES } from "@/lib/orders";
-import { Notice, Page, dateTime, egp, useAdminData } from "../util";
+import { Notice, Page, adminApi, dateTime, egp, useAdminData, useNotice } from "../util";
 
 type Row = { id: number; orderNumber: string; status: keyof typeof STATUS_LABEL; createdAt: string; customerName: string; email: string; mobile: string; governorate: string; totalCents: number; itemCount: number };
 
@@ -12,7 +12,17 @@ function Orders() {
   const params = useSearchParams().get("status");
   const [status, setStatus] = useState<string>(params && (STATUSES as string[]).includes(params) ? params : "all");
   const [q, setQ] = useState("");
-  const { data, error } = useAdminData<Row[]>("/admin/orders");
+  const { data, error, reload } = useAdminData<Row[]>("/admin/orders");
+  const { msg, run } = useNotice();
+
+  const change = (o: Row, to: string) => {
+    const warning = to === "canceled" ? " Stock will be returned to the shop." : o.status === "canceled" ? " Stock will be taken from the shop again." : "";
+    if (!confirm(`Change ${o.orderNumber} from ${STATUS_LABEL[o.status]} to ${STATUS_LABEL[to as keyof typeof STATUS_LABEL]}?${warning}`)) return;
+    return run(async () => {
+      await adminApi.patch(`/admin/orders/${o.id}/status`, { status: to });
+      await reload();
+    }, `${o.orderNumber} is now ${STATUS_LABEL[to as keyof typeof STATUS_LABEL]}.`);
+  };
 
   const counts = useMemo(() => {
     const c: Record<string, number> = { all: data?.length ?? 0 };
@@ -27,7 +37,7 @@ function Orders() {
 
   return (
     <Page title="Orders" sub="Open an order to see what was bought, call the customer and update its status.">
-      <Notice msg={error ? { kind: "error", text: error } : null} />
+      <Notice msg={error ? { kind: "error", text: error } : msg} />
       <div className="tabs" role="group" aria-label="Filter by status">
         {["all", ...STATUSES].map((s) => (
           <button key={s} aria-pressed={status === s} onClick={() => setStatus(s)}>
@@ -57,7 +67,11 @@ function Orders() {
                 <td data-label="Governorate">{o.governorate}</td>
                 <td data-label="Items" className="right num">{o.itemCount}</td>
                 <td data-label="Total" className="right num">EGP {egp(o.totalCents)}</td>
-                <td data-label="Status"><span className={`pill ${o.status}`}>{STATUS_LABEL[o.status]}</span></td>
+                <td data-label="Status">
+                  <select className={`status-select ${o.status}`} aria-label={`Status of ${o.orderNumber}`} value={o.status} onChange={(e) => change(o, e.target.value)}>
+                    {STATUSES.map((st) => (<option key={st} value={st}>{STATUS_LABEL[st]}</option>))}
+                  </select>
+                </td>
               </tr>
             ))}
             {data && rows.length === 0 && (

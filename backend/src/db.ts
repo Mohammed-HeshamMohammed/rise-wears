@@ -8,7 +8,7 @@ export const pool = new pg.Pool({
 });
 
 export interface Db {
-  query(text: string, params?: unknown[]): Promise<{ rows: any[] }>;
+  query(text: string, params?: unknown[]): Promise<{ rows: any[]; rowCount: number | null }>;
 }
 
 export async function query<T extends pg.QueryResultRow = any>(text: string, params: unknown[] = []) {

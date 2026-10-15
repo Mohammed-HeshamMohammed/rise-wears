@@ -1,5 +1,7 @@
 import { ApiError } from "./api";
 import { FALLBACK_PRODUCTS } from "./fallback-catalog";
+import { DEFAULT_HERO } from "./hero";
+import { demoHero, saveDemoHero } from "./demo-hero";
 import type { Product } from "./types";
 
 // In-browser stand-in for the admin API, used only when no backend can be reached (a frontend-only test site).
@@ -9,10 +11,6 @@ export const DEMO_USER = "admin";
 export const DEMO_PASSWORD = "admin123";
 
 const KEY = "rise-demo-admin-data-v3";
-const FLOW: Record<string, string[]> = {
-  pending: ["confirmed", "canceled"], confirmed: ["shipped", "canceled"], shipped: ["delivered", "returned"],
-  delivered: ["returned"], canceled: [], returned: [],
-};
 
 interface Tax { id: number; name: string; slug: string; sortOrder: number }
 interface Order {
@@ -268,12 +266,18 @@ export async function demoRequest(method: string, path: string, body: unknown, r
       const order = s.orders.find((o) => o.id === id) ?? fail(404, "Order not found");
       if (method === "GET") return { ...order, orderNumber: order.order_number };
       if (sub === "status") {
-        if (!FLOW[order.status]?.includes(b.status)) fail(409, `Can't move an order from ${order.status} to ${b.status}.`);
+        if (order.status === b.status) fail(409, `This order is already ${b.status}.`);
         order.status = b.status;
         order.history.push({ id: order.history.length + 1, status: b.status, note: b.note ?? "", created_at: new Date().toISOString() });
         return done({ ok: true, status: b.status });
       }
       return fail(404, "Not found");
+    }
+    case "hero": {
+      if (method === "GET") return demoHero() ?? DEFAULT_HERO;
+      if (method === "DELETE") { saveDemoHero(null); return DEFAULT_HERO; }
+      if (!saveDemoHero(b)) fail(413, "The browser couldn't store that image. Try a smaller one (under 2 MB).");
+      return b;
     }
     case "customers": return s.customers;
     case "subscribers": return s.subscribers;

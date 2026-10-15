@@ -64,7 +64,7 @@ Admin first login: scan the QR code with Google Authenticator or Authy, enter th
 
 ### What the dashboard shows
 
-`/admin` opens on a summary of the store: revenue, orders and average order compared with the previous period (switch between 7, 14, 30 and 90 days), a revenue-per-day chart, orders by status, recent orders, what needs attention (pending orders, sold-out sizes, new messages), best sellers and low stock. The rest of the sidebar manages orders, customers and messages, products, categories, deals and promo codes, the announcement bar and shipping rates. Use the "Dark mode" button in the sidebar to switch themes; the choice is remembered.
+`/admin` opens on a summary of the store: revenue, orders and average order compared with the previous period (switch between 7, 14, 30 and 90 days), a revenue-per-day chart, orders by status, recent orders, what needs attention (pending orders, sold-out sizes, new messages), best sellers and low stock. The rest of the sidebar manages orders, customers and messages, products, categories, deals and promo codes, the announcement bar and shipping rates. Orders can be moved to any status (cash on delivery orders are often refused or returned), and **Home page hero** lets you pick one of three hero styles and change the words and photos. Use the "Dark mode" button in the sidebar to switch themes; the choice is remembered.
 
 ### Demo dashboard (no backend)
 

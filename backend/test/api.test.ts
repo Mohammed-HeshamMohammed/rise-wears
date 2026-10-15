@@ -276,20 +276,36 @@ describe("admin two-step login", () => {
       await api().put(`/api/admin/deals/${deals[0].id}`).set(h).send({ ...deals[0], active: true }).expect(200);
     });
 
-    it("moves orders through valid statuses only, restocking cancellations", async () => {
+    it("lets the admin set any status, keeping stock right when orders are canceled or reopened", async () => {
       const before = await stockOf("rise-black-sweatpants", "XL");
       const o = await api().post("/api/orders").send({
         items: [{ productId: bySlug("rise-black-sweatpants").id, size: "XL", quantity: 1 }], governorate: "Cairo", customer,
       });
       const row = (await api().get("/api/admin/orders?q=" + o.body.orderNumber).set(h)).body[0];
       expect(row.status).toBe("pending");
-      expect((await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "delivered" })).status).toBe(409);
-      await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "confirmed" }).expect(200);
+      expect((await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "pending" })).status).toBe(409);
+      await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "shipped" }).expect(200);
       await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "canceled", note: "customer called" }).expect(200);
       expect(await stockOf("rise-black-sweatpants", "XL")).toBe(before);
-      expect((await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "confirmed" })).status).toBe(409);
+      await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "confirmed" }).expect(200);
+      expect(await stockOf("rise-black-sweatpants", "XL")).toBe(before - 1);
+      await api().patch(`/api/admin/orders/${row.id}/status`).set(h).send({ status: "returned" }).expect(200);
+      expect(await stockOf("rise-black-sweatpants", "XL")).toBe(before - 1);
       const detail = (await api().get(`/api/admin/orders/${row.id}`).set(h)).body;
-      expect(detail.history.map((x: any) => x.status)).toEqual(["pending", "confirmed", "canceled"]);
+      expect(detail.history.map((x: any) => x.status)).toEqual(["pending", "shipped", "canceled", "confirmed", "returned"]);
+    });
+
+    it("customizes the hero section and validates it", async () => {
+      const def = (await api().get("/api/hero")).body;
+      expect(def.style).toBe("classic");
+      const next = { ...def, style: "split", title: "NEW DROP", dim: 20 };
+      await api().put("/api/admin/hero").set(h).send(next).expect(200);
+      expect((await api().get("/api/hero")).body).toMatchObject({ style: "split", title: "NEW DROP", dim: 20 });
+      expect((await api().put("/api/admin/hero").set(h).send({ ...next, style: "weird" })).status).toBe(400);
+      expect((await api().put("/api/admin/hero").set(h).send({ ...next, buttonLink: "javascript:alert(1)" })).status).toBe(400);
+      expect((await api().put("/api/admin/hero").send(next)).status).toBe(401);
+      await api().delete("/api/admin/hero").set(h).expect(200);
+      expect((await api().get("/api/hero")).body.title).toBe("RISE");
     });
 
     it("reports dashboard stats that add up", async () => {

@@ -8,12 +8,13 @@ import { one, query, tx } from "../db.js";
 import { requireAdmin } from "../lib/auth.js";
 import { GOVERNORATES } from "../lib/checkout.js";
 import { HttpError } from "../lib/errors.js";
+import { DEFAULT_HERO, getHero, heroSchema, saveHero } from "../lib/hero.js";
 import { getProductById, listProducts } from "../lib/products.js";
 import { notifyOrderStatus } from "../lib/mail/index.js";
 import { notifyStorefront } from "../lib/revalidate.js";
 import { slugify } from "../lib/slug.js";
 import { PERIODS, dashboardStats } from "../lib/stats.js";
-import { ORDER_STATUSES, STATUS_FLOW, restockOrder, type OrderStatus } from "../lib/orders.js";
+import { ORDER_STATUSES, reserveOrder, restockOrder } from "../lib/orders.js";
 
 export const adminRouter = Router();
 adminRouter.use(requireAdmin);
@@ -349,12 +350,13 @@ adminRouter.patch("/orders/:id/status", async (req, res) => {
   await tx(async (db) => {
     const o = (await db.query("SELECT status FROM orders WHERE id = $1 FOR UPDATE", [id])).rows[0];
     if (!o) throw new HttpError(404, "Order not found");
-    if (!STATUS_FLOW[o.status as OrderStatus]?.includes(status)) throw new HttpError(409, `Can't move an order from ${o.status} to ${status}.`);
+    if (o.status === status) throw new HttpError(409, `This order is already ${status}.`);
     if (status === "canceled") await restockOrder(db, id);
+    else if (o.status === "canceled") await reserveOrder(db, id);
     await db.query("UPDATE orders SET status = $2 WHERE id = $1", [id, status]);
     await db.query("INSERT INTO order_status_history (order_id, status, note) VALUES ($1,$2,$3)", [id, status, note]);
   });
-  void notifyOrderStatus(id);
+  if (status !== "pending") void notifyOrderStatus(id);
   res.json({ ok: true, status });
 });
 
@@ -398,4 +400,19 @@ adminRouter.post("/uploads", express.raw({ type: "image/*", limit: "6mb" }), (re
   const name = `${randomBytes(12).toString("hex")}.${ext}`;
   writeFileSync(join(dir, name), body);
   res.status(201).json({ url: `${config.PUBLIC_API_URL}/uploads/${name}` });
+});
+
+adminRouter.get("/hero", async (_req, res) => {
+  res.json(await getHero());
+});
+
+adminRouter.put("/hero", async (req, res) => {
+  const hero = heroSchema.parse(req.body);
+  await saveHero(hero);
+  res.json(hero);
+});
+
+adminRouter.delete("/hero", async (_req, res) => {
+  await saveHero(DEFAULT_HERO);
+  res.json(DEFAULT_HERO);
 });
