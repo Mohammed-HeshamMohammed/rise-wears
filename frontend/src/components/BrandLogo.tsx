@@ -30,7 +30,7 @@ export default function BrandLogo() {
       </defs>
       <g clipPath={`url(#${id}-horizon)`}>
         <g className="brand-logo-lift">
-          <path className="brand-logo-arrow" d={ARROW} fill="#111" />
+          <path className="brand-logo-arrow" d={ARROW} fill="#111" pathLength={1} />
         </g>
       </g>
       {LETTERS.map((_, i) => (
