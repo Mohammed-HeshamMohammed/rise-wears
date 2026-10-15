@@ -1,30 +1,18 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from "react";
-import { ApiError, adminSession, api } from "@/lib/api";
+import { ApiError, adminSession, api, demoSwitch } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
 import { devAuth, firebaseConfigured } from "@/lib/firebase";
+import AdminShell from "./AdminShell";
 
 type Phase = "checking" | "login" | "denied" | "setup" | "code" | "ready";
-
-const NAV = [
-  ["/admin", "Dashboard"],
-  ["/admin/orders", "Orders"],
-  ["/admin/products", "Products"],
-  ["/admin/categories", "Categories"],
-  ["/admin/deals", "Deals & promo codes"],
-  ["/admin/announcements", "Announcement bar"],
-  ["/admin/shipping", "Shipping rates"],
-  ["/admin/people", "Customers & inbox"],
-] as const;
 
 // Three locks: a login, the admin role, and an authenticator code. The backend re-checks all three on every request.
 export default function AdminGate({ children }: { children: ReactNode }) {
   const { user, loading, signIn, signInWithGoogle, signOut } = useAuth();
   const [phase, setPhase] = useState<Phase>("checking");
-  const path = usePathname();
+  demoSwitch.active = false;
 
   const check = useCallback(async () => {
     if (!user) return setPhase("login");
@@ -77,31 +65,9 @@ export default function AdminGate({ children }: { children: ReactNode }) {
   if (phase === "code") return <CodeBox onDone={() => setPhase("ready")} onLogout={() => signOut()} />;
 
   return (
-    <div className="adm-layout">
-      <aside className="adm-side">
-        <div className="brand">
-          RISE<small>ADMIN DASHBOARD</small>
-        </div>
-        <nav>
-          {NAV.map(([href, label]) => (
-            <Link key={href} href={href} className={path === href || (href !== "/admin" && path.startsWith(href)) ? "on" : ""}>
-              {label}
-            </Link>
-          ))}
-          <Link href="/" target="_blank">
-            View store ↗
-          </Link>
-        </nav>
-        <div className="foot">
-          {user?.email}
-          <br />
-          <button className="btn-a ghost sm" onClick={() => { adminSession.clear(); signOut(); }}>
-            Log out
-          </button>
-        </div>
-      </aside>
-      <main className="adm-main">{children}</main>
-    </div>
+    <AdminShell who={user?.email ?? ""} onLogout={() => { adminSession.clear(); signOut(); }}>
+      {children}
+    </AdminShell>
   );
 }
 

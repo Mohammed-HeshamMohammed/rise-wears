@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import AdminGate from "./AdminGate";
+import AdminRoot from "./AdminRoot";
 import "./admin.css";
 
 export const metadata: Metadata = {
@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 export default function AdminLayout({ children }: { children: ReactNode }) {
   return (
     <div className="adm">
-      <AdminGate>{children}</AdminGate>
+      <AdminRoot>{children}</AdminRoot>
     </div>
   );
 }

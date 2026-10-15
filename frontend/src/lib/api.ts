@@ -2,6 +2,11 @@ import { FALLBACK_ANNOUNCEMENTS, FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from "
 import type { Announcement, Product } from "./types";
 
 const PUBLIC_API = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
+export const apiOrigin = PUBLIC_API;
+
+// Set by the offline demo dashboard (see demo-admin.ts): admin calls then never leave the browser.
+export const demoSwitch = { active: false };
+
 const BASE = typeof window === "undefined" ? (process.env.API_URL || PUBLIC_API).replace(/\/$/, "") : PUBLIC_API;
 
 export class ApiError extends Error {
@@ -50,6 +55,10 @@ interface Opts {
 }
 
 export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
+  if (demoSwitch.active && path.startsWith("/admin")) {
+    const { demoRequest } = await import("./demo-admin");
+    return demoRequest(opts.method ?? (opts.body !== undefined || opts.raw ? "POST" : "GET"), path, opts.body, opts.raw);
+  }
   const headers: Record<string, string> = {};
   if (opts.body !== undefined) headers["Content-Type"] = "application/json";
   if (opts.raw) headers["Content-Type"] = opts.raw.type;

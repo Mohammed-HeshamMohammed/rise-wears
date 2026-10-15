@@ -62,6 +62,16 @@ These only work with the dev login on: `AUTH_DEV_MODE=true` in the backend and `
 Admin first login: scan the QR code with Google Authenticator or Authy, enter the 6-digit code, and save the backup codes. To redo the setup on a test database, run:
 `UPDATE users SET totp_enabled=false, totp_secret_enc=NULL, backup_code_hashes='{}', totp_last_step=0 WHERE email='admin@rise.test';`
 
+### Demo dashboard (no backend)
+
+When the site cannot reach a backend (for example a frontend-only test on Hostinger), `/admin` switches to a demo dashboard on its own:
+
+| Username | Password |
+|---|---|
+| `admin` | `admin123` |
+
+It runs on sample data (the 4 products, 6 orders, promo codes, shipping rates) that is stored in your browser only, so edits never touch the real store, and "Reset sample data" restores it. It never sends anything to a server and grants no access to anything real. As soon as a backend answers, `/admin` uses the real secured login (account, admin role and authenticator code) instead, and the demo is not reachable.
+
 ### Admin two-step login
 1. Put the admin's email in `ADMIN_EMAILS` (backend). The email must be **verified** (Google login always is).
 2. Open `/admin`, sign in. First time only: scan the QR code with Google Authenticator / Authy and save the 8 backup codes.
