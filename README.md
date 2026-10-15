@@ -43,7 +43,24 @@ The page stylesheets in `frontend/src/styles/generated` are built from `styles/o
 | Customer data, orders, products | PostgreSQL. Money is stored as integer piastres. |
 | Prices, discounts, shipping, stock | Computed on the **server** at checkout (`backend/src/lib/pricing.ts`). The browser's totals are for display only. |
 | Admin dashboard | `/admin`. Needs: a login with the admin role, **and** a 6-digit authenticator code. |
+| Policies | Terms of Service, Privacy Policy, Shipping & Delivery and Returns & Refunds pages (`/terms`, `/privacy`, `/shipping`, `/returns`), linked in the footer, checkout and signup. They are templates written for this store: have a lawyer review them, and update the date in `frontend/src/lib/policies.ts` when you change them. |
 | SEO / AEO | `robots.txt`, `sitemap.xml`, `llms.txt`, `llms-full.txt`, Google Merchant feed (`/feeds/google-merchant.xml`), JSON-LD, canonical URLs, clean URLs and 301s from the old store URLs. |
+
+### Test logins (local only)
+
+`npm run seed:demo` in `backend` creates these accounts and six demo orders (one per status). It refuses to run in production.
+
+| Who | Email | Password | What you get |
+|---|---|---|---|
+| Admin | `admin@rise.test` | none | The dashboard at `/admin`, after two-step setup |
+| Customer | `customer@rise.test` | none | Orders: one Pending, one Delivered |
+| Customer | `sara@rise.test` | none | Orders: Shipped and Confirmed |
+| Customer | `omar@rise.test` | none | Orders: Canceled and Returned |
+
+These only work with the dev login on: `AUTH_DEV_MODE=true` in the backend and `NEXT_PUBLIC_AUTH_DEV_MODE=true` in the frontend. Any email works there and no password is checked. The API refuses to start in production with it on, so these accounts cannot exist on the live site.
+
+Admin first login: scan the QR code with Google Authenticator or Authy, enter the 6-digit code, and save the backup codes. To redo the setup on a test database, run:
+`UPDATE users SET totp_enabled=false, totp_secret_enc=NULL, backup_code_hashes='{}', totp_last_step=0 WHERE email='admin@rise.test';`
 
 ### Admin two-step login
 1. Put the admin's email in `ADMIN_EMAILS` (backend). The email must be **verified** (Google login always is).

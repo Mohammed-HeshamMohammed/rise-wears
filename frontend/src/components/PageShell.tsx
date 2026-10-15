@@ -11,8 +11,9 @@ import "@/styles/generated/checkout.css";
 import "@/styles/generated/about.css";
 import "@/styles/generated/contact.css";
 import "@/styles/generated/account.css";
+import "@/styles/generated/legal.css";
 
-export type PageName = "home" | "shop" | "product" | "cart" | "checkout" | "about" | "contact" | "account";
+export type PageName = "home" | "shop" | "product" | "cart" | "checkout" | "about" | "contact" | "account" | "legal";
 
 // Scopes the page's CSS under `.pg-<name>` (see scripts/build-css.mjs) so it renders like the original per-page stylesheets.
 export default async function PageShell({ page, children }: { page: PageName; children: ReactNode }) {

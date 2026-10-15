@@ -28,7 +28,7 @@ function scope(css, cls) {
 const pages = [
   ["home", "original"], ["shop", "original"], ["product", "original"], ["cart", "original"],
   ["checkout", "original"], ["about", "original"], ["contact", "original"],
-  ["account", "own"],
+  ["account", "own"], ["legal", "own"],
 ];
 
 mkdirSync(join(root, "generated"), { recursive: true });

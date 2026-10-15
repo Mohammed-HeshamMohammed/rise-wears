@@ -37,7 +37,8 @@ describe("catalogue", () => {
     const hoodie = bySlug("rise-black-hoodie");
     expect(hoodie.priceCents).toBe(119999);
     expect(hoodie.sizes.map((s: any) => s.size)).toEqual(["S", "M", "L", "XL"]);
-    expect(hoodie.images[0].url).toBe("/images/products/blackhoodie/1.jpg");
+    expect(hoodie.images[0].url).toBe("/images/products/blackhoodie/model.webp");
+    expect(hoodie.images.map((i: any) => i.url)).toContain("/images/products/blackhoodie/1.jpg");
     expect(hoodie.category.slug).toBe("tops");
   });
   it("marks a product sold out when every size is at 0", () => {

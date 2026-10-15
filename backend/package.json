@@ -12,7 +12,8 @@
     "seed": "tsx src/seed.ts",
     "db:local": "node scripts/dev-db.mjs",
     "test": "vitest run",
-    "mail:preview": "tsx scripts/preview-emails.ts"
+    "mail:preview": "tsx scripts/preview-emails.ts",
+    "seed:demo": "tsx src/seed-demo.ts"
   },
   "dependencies": {
     "cors": "^2.8.5",

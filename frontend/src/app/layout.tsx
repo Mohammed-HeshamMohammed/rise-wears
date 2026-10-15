@@ -5,6 +5,7 @@ import JsonLd from "@/components/JsonLd";
 import Providers from "@/components/Providers";
 import { SITE_URL } from "@/lib/format";
 import "./intro.css";
+import "./scrollbars.css";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),

@@ -582,6 +582,15 @@
     .hero-overlay{
         background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.1) 45%,rgba(0,0,0,.6));
     }
+    .hero h1{
+        font-size:4rem;
+        margin-bottom:0;
+    }
+    .hero .hero-slogan{
+        font-size:1rem;
+        letter-spacing:5px;
+        margin-top:0;
+    }
 }
 
 @media(max-width:500px){

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { POLICIES } from "@/lib/policies";
 
 export default function Footer() {
   return (
@@ -34,6 +35,14 @@ export default function Footer() {
             <h4>COMPANY</h4>
             <Link href="/about">About</Link>
             <Link href="/contact">Contact</Link>
+          </div>
+          <div>
+            <h4>LEGAL</h4>
+            {POLICIES.map((p) => (
+              <Link key={p.href} href={p.href}>
+                {p.label}
+              </Link>
+            ))}
           </div>
         </div>
         <div className="container">

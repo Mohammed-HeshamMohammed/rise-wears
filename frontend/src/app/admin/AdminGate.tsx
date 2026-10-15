@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState, type FormEvent, type ReactNode } from "react";
 import { ApiError, adminSession, api } from "@/lib/api";
 import { useAuth } from "@/lib/auth";
-import { firebaseConfigured } from "@/lib/firebase";
+import { devAuth, firebaseConfigured } from "@/lib/firebase";
 
 type Phase = "checking" | "login" | "denied" | "setup" | "code" | "ready";
 
@@ -126,6 +126,7 @@ function LoginBox({ signIn, google }: { signIn: (e: string, p: string) => Promis
       <form className="box" onSubmit={(e: FormEvent) => { e.preventDefault(); run(() => signIn(email, password)); }}>
         <div className="brand">RISE ADMIN</div>
         <p className="sub">Sign in with your admin account.</p>
+        {devAuth && !firebaseConfigured && <div className="msg ok">Test admin: admin@rise.test (leave the password empty). You will set up two-step verification on the first login.</div>}
         {error && <div className="msg error">{error}</div>}
         <div className="f"><label>Email</label><input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required autoComplete="username" /></div>
         <div className="f"><label>Password</label><input type="password" value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" /></div>

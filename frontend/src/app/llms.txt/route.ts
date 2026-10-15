@@ -21,6 +21,9 @@ export async function GET() {
 - [Shop](${SITE_URL}/shop): all products
 - [About](${SITE_URL}/about): the RISE story and values
 - [Contact](${SITE_URL}/contact): contact form and FAQ
+- [Shipping & Delivery](${SITE_URL}/shipping): delivery fees by governorate, 2-4 business days, cash on delivery
+- [Returns & Refunds](${SITE_URL}/returns): 14-day returns, size exchanges within 7 days
+- [Terms of Service](${SITE_URL}/terms) and [Privacy Policy](${SITE_URL}/privacy)
 
 ## Products
 ${products.map((p) => `- [${p.name}](${SITE_URL}/products/${p.slug}): ${p.subtitle}. ${formatPrice(p.priceCents)}${p.soldOut ? " (sold out)" : ""}`).join("\n")}

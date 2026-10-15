@@ -8,7 +8,7 @@
 
 .cart-page{
 
-    padding:140px 0 100px;
+    padding:64px 0 100px;
 
     min-height:70vh;
 
@@ -472,7 +472,7 @@
 
     .cart-page{
 
-        padding-top:var(--header-height);
+        padding-top:40px;
 
     }
 

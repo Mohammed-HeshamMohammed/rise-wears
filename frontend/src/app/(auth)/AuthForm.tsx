@@ -49,7 +49,7 @@ function Form({ mode }: { mode: "login" | "signup" }) {
       {!available && (
         <div className="notice error">Login isn't set up on this site yet. Add the Firebase settings in the environment file (see README).</div>
       )}
-      {devAuth && !firebaseConfigured && <div className="notice">Local development login: any email works, no password is checked.</div>}
+      {devAuth && !firebaseConfigured && <div className="notice">Test login: any email works and no password is checked. Try customer@rise.test (has demo orders) or admin@rise.test (dashboard).</div>}
       {msg && <div className={`notice ${msg.kind}`}>{msg.text}</div>}
 
       <form onSubmit={submit}>
@@ -67,6 +67,11 @@ function Form({ mode }: { mode: "login" | "signup" }) {
           <label htmlFor="password">Password</label>
           <input id="password" type="password" value={password} onChange={(e) => setPassword(e.target.value)} required={!(devAuth && !firebaseConfigured)} minLength={devAuth && !firebaseConfigured ? 0 : 6} autoComplete={login ? "current-password" : "new-password"} />
         </div>
+        {!login && (
+          <p className="consent">
+            By creating an account you agree to our <Link href="/terms">Terms of Service</Link> and <Link href="/privacy">Privacy Policy</Link>.
+          </p>
+        )}
         <button className="auth-btn" disabled={busy || !available}>
           {busy ? "PLEASE WAIT..." : login ? "LOG IN" : "CREATE ACCOUNT"}
         </button>

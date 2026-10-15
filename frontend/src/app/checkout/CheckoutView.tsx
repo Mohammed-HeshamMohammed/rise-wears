@@ -198,6 +198,9 @@ export default function CheckoutView() {
                 <span id="checkout-total">{formatPrice(quote?.totalCents ?? 0)}</span>
               </div>
               {error && <p className="form-status error">{error}</p>}
+              <p className="consent">
+                By placing your order you agree to our <Link href="/terms">Terms of Service</Link>, <Link href="/returns">Returns &amp; Refunds</Link> and <Link href="/privacy">Privacy Policy</Link>.
+              </p>
               <button type="submit" form="checkout-form" className="checkout-submit" disabled={busy || !quote || !form.governorate}>
                 {busy ? "PLACING ORDER..." : "PLACE ORDER"}
               </button>
