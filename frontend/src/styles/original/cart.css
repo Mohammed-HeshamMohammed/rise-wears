@@ -472,7 +472,7 @@
 
     .cart-page{
 
-        padding-top:110px;
+        padding-top:var(--header-height);
 
     }
 

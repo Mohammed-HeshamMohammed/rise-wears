@@ -3,7 +3,7 @@
 =========================================== */
 
 :root {
-    --header-height: 110px;
+    --header-height: 96px;
 }
 
 /* ---------------- HEADER ---------------- */
@@ -13,7 +13,6 @@
     top: 0 !important;
     left: 0 !important;
     width: 100% !important;
-    height: var(--header-height);
     z-index: 9999 !important;
 
     background: #ffffff !important;
@@ -28,15 +27,13 @@
 /* ---------------- NAVBAR ---------------- */
 
 .navbar {
-    height: 110px;
+    height: 60px;
 
     display: flex;
 
     align-items: center;
 
     justify-content: space-between;
-
-    transform: translateY(-20px);
 }
 
 /* ---------------- LOGO ---------------- */
@@ -49,7 +46,7 @@
 
 .logo img,
 .logo svg {
-    height: 55px;
+    height: 46px;
 
     width: auto;
 
@@ -122,7 +119,7 @@
 
     color: #fff;
 
-    padding: 10px 0;
+    padding: 7px 0;
 
     white-space: nowrap;
 }
@@ -173,13 +170,7 @@
 
 /* ---------------- MOBILE HEADER POSITION ---------------- */
 
-@media (max-width: 768px) {
 
-    .navbar {
-        transform: translateY(0);
-    }
-
-}
 
 
 

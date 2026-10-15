@@ -1,3 +1,4 @@
+import { FALLBACK_ANNOUNCEMENTS, FALLBACK_CATEGORIES, FALLBACK_PRODUCTS } from "./fallback-catalog";
 import type { Announcement, Product } from "./types";
 
 const PUBLIC_API = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:4000").replace(/\/$/, "");
@@ -87,12 +88,15 @@ export async function api<T = any>(path: string, opts: Opts = {}): Promise<T> {
   return data as T;
 }
 
-// Page helpers return empty data instead of throwing, so a down API doesn't take pages down.
+// Page helpers fall back to the bundled catalog when the API can't be reached, so pages never break (see fallback-catalog.ts).
 export async function getProducts(query = ""): Promise<Product[]> {
   try {
     return await api<Product[]>(`/products${query}`, { revalidate: 60 });
   } catch {
-    return [];
+    const params = new URLSearchParams(query);
+    return FALLBACK_PRODUCTS.filter(
+      (p) => (!params.has("featured") || p.featured) && (!params.get("category") || p.category?.slug === params.get("category")),
+    );
   }
 }
 
@@ -101,7 +105,15 @@ export async function getProduct(slug: string): Promise<Product | null> {
     return await api<Product>(`/products/${encodeURIComponent(slug)}`, { revalidate: 60 });
   } catch (e) {
     if (e instanceof ApiError && e.status === 404) return null;
-    throw e;
+    return FALLBACK_PRODUCTS.find((p) => p.slug === slug) ?? null;
+  }
+}
+
+export async function getCategories(): Promise<{ name: string; slug: string }[]> {
+  try {
+    return await api<{ name: string; slug: string }[]>("/categories", { revalidate: 60 });
+  } catch {
+    return FALLBACK_CATEGORIES;
   }
 }
 
@@ -109,6 +121,6 @@ export async function getAnnouncements(): Promise<Announcement[]> {
   try {
     return await api<Announcement[]>("/announcements", { revalidate: 60 });
   } catch {
-    return [];
+    return FALLBACK_ANNOUNCEMENTS;
   }
 }

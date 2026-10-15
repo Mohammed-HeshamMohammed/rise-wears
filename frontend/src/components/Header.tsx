@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useRef } from "react";
 import { useCart } from "@/lib/cart";
 import BrandLogo from "./BrandLogo";
 import type { Announcement } from "@/lib/types";
@@ -30,8 +31,19 @@ function Ticker({ items }: { items: Announcement[] }) {
 
 export default function Header({ announcements }: { announcements: Announcement[] }) {
   const { count } = useCart();
+  const bar = useRef<HTMLDivElement>(null);
+  // The bar is as tall as its content; tell the page how much room to leave under it.
+  useEffect(() => {
+    const el = bar.current;
+    if (!el) return;
+    const sync = () => document.documentElement.style.setProperty("--header-height", `${el.offsetHeight}px`);
+    sync();
+    const observer = new ResizeObserver(sync);
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
   return (
-    <div id="header">
+    <div id="header" ref={bar}>
       <header className="site-header">
         {announcements.length > 0 && <Ticker items={announcements} />}
         <div className="container navbar">

@@ -562,7 +562,7 @@
 
 @media(max-width:800px){
     .hero{
-        height:calc(100svh - 110px);
+        height:calc(100svh - var(--header-height));
         min-height:700px;
         background-image:url("../images/hero/hero-mobile.webp");
     }

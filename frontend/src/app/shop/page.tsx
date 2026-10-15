@@ -3,7 +3,7 @@ import { Suspense } from "react";
 import JsonLd from "@/components/JsonLd";
 import NewsletterForm from "@/components/NewsletterForm";
 import PageShell from "@/components/PageShell";
-import { api, getProducts } from "@/lib/api";
+import { getCategories, getProducts } from "@/lib/api";
 import { SITE_URL, absoluteUrl } from "@/lib/format";
 import ShopGrid from "./ShopGrid";
 
@@ -17,7 +17,7 @@ export const revalidate = 60;
 
 export default async function ShopPage() {
   const products = await getProducts();
-  const categories = await api<{ name: string; slug: string }[]>("/categories", { revalidate: 60 }).catch(() => []);
+  const categories = await getCategories();
   return (
     <PageShell page="shop">
       <JsonLd

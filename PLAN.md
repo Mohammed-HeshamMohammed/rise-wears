@@ -15,7 +15,8 @@ Setup and deployment steps are in [README.md](README.md).
 | 5 | Profile and order lists (Canceled, Delivered…) | Built: profile, saved addresses, orders by status. |
 | 6 | Emails styled like the site | Built: order confirmation, owner alert, status updates (confirmed, shipped, delivered, canceled, returned), contact-form forward, newsletter welcome. SMTP, retried twice, never blocks an order, HTML-escaped. Needs the mailbox password to send for real. Preview: `npm run mail:preview`. |
 | - | Design copied from current store | Built: original CSS reused, scoped per page so every page renders like the original. |
-| 7 | Animated logo | Built ("Trace and fill", chosen by the owner over two alternatives): in the header, the arrow outline draws itself and fills, then RISE fades up letter by letter on a full page load; the arrow lifts on hover. Not replayed on in-site navigation, off for reduced-motion users. Verified in Chrome. |
+| 7 | Animated logo intro | Built ("Trace and fill", chosen by the owner): on the first home-page visit of a session the logo traces itself full screen, fills in, RISE fades up, then it flies into the header as the page appears. Other pages and repeat visits trace the header logo only. Off for reduced-motion users, with a CSS fail-safe. Verified in Chrome. |
+| 8 | Test deployment without a backend | When the API is unreachable the site shows the bundled copy of the current 4 products, photos, sizes and stock (`frontend/src/lib/fallback-catalog.ts`). Browsing works; cart totals, checkout, login and the dashboard still need the backend. |
 | - | Server-side prices | Built. Fixes the old store where totals and promo codes were decided in the browser. |
 
 Verified: 45 automated tests against a real PostgreSQL (pricing rules, stock, accounts, 2-step login incl. lockout and
