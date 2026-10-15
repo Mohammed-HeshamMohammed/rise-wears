@@ -23,13 +23,13 @@ export default function PeoplePage() {
   return (
     <Page title="Customers & inbox" sub="Registered customers, newsletter subscribers and contact-form messages.">
       <Notice msg={error ? { kind: "error", text: error } : null} />
-      <div className="chips">
+      <div className="tabs" role="group" aria-label="Choose a list">
         {(["customers", "subscribers", "messages"] as Tab[]).map((t) => (
-          <button key={t} className={tab === t ? "on" : ""} onClick={() => setTab(t)}>{t}</button>
+          <button key={t} aria-pressed={tab === t} onClick={() => setTab(t)}>{t}</button>
         ))}
-        {tab === "subscribers" && <button onClick={exportCsv}>Export CSV</button>}
+        {tab === "subscribers" && <button className="btn-a ghost sm" onClick={exportCsv}>Export CSV</button>}
       </div>
-      <div className="card t-wrap" style={{ padding: 6 }}>
+      <div className="card flush t-wrap">
         {tab === "customers" && (
           <table className="t"><thead><tr><th>Name</th><th>Email</th><th>Mobile</th><th>Orders</th><th>Joined</th></tr></thead>
             <tbody>{data?.map((c) => <tr key={c.id}><td>{c.name || "—"}</td><td>{c.email}</td><td>{c.mobile || "—"}</td><td>{c.orderCount}</td><td>{dateTime(c.createdAt)}</td></tr>)}</tbody></table>
@@ -42,7 +42,7 @@ export default function PeoplePage() {
           <table className="t"><thead><tr><th>From</th><th>Subject</th><th>Message</th><th>Date</th></tr></thead>
             <tbody>{data?.map((m) => <tr key={m.id}><td><b>{m.name}</b><br /><a href={`mailto:${m.email}`}>{m.email}</a></td><td>{m.subject || "—"}</td><td style={{ maxWidth: 420, whiteSpace: "pre-wrap" }}>{m.message}</td><td>{dateTime(m.createdAt)}</td></tr>)}</tbody></table>
         )}
-        {data?.length === 0 && <p style={{ textAlign: "center", color: "#666", padding: 30 }}>Nothing here yet.</p>}
+        {data?.length === 0 && <div className="empty"><b>Nothing here yet</b>New entries will show up in this list.</div>}
       </div>
     </Page>
   );

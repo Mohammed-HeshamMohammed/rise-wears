@@ -70,8 +70,10 @@ export default function DemoGate({ children }: { children: ReactNode }) {
       who="admin (demo)"
       onLogout={logout}
       banner={
-        <div className="msg ok" style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
-          <span>Demo mode: changes are saved in this browser only and don't affect the store.</span>
+        <div className="demo-banner">
+          <span>
+            <b>DEMO</b> &nbsp;Sample data saved in this browser only. Nothing here affects the real store.
+          </span>
           <button className="btn-a ghost sm" onClick={() => { resetDemoData(); location.reload(); }}>Reset sample data</button>
         </div>
       }

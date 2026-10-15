@@ -51,14 +51,14 @@ export function Notice({ msg }: { msg: { kind: "ok" | "error"; text: string } | 
 export function Page({ title, sub, action, children }: { title: string; sub?: string; action?: ReactNode; children: ReactNode }) {
   return (
     <>
-      <div className="flex between" style={{ marginBottom: 6 }}>
+      <div className="page-head">
         <div>
           <h1>{title}</h1>
-          {sub && <p className="sub" style={{ marginBottom: 0 }}>{sub}</p>}
+          {sub && <p className="sub">{sub}</p>}
         </div>
         {action}
       </div>
-      <div style={{ marginTop: 22 }}>{children}</div>
+      {children}
     </>
   );
 }

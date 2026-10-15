@@ -12,6 +12,7 @@ import { getProductById, listProducts } from "../lib/products.js";
 import { notifyOrderStatus } from "../lib/mail/index.js";
 import { notifyStorefront } from "../lib/revalidate.js";
 import { slugify } from "../lib/slug.js";
+import { PERIODS, dashboardStats } from "../lib/stats.js";
 import { ORDER_STATUSES, STATUS_FLOW, restockOrder, type OrderStatus } from "../lib/orders.js";
 
 export const adminRouter = Router();
@@ -28,17 +29,9 @@ const idParam = (v: unknown) => {
   return n;
 };
 
-adminRouter.get("/stats", async (_req, res) => {
-  const o = await one(
-    `SELECT count(*)::int AS orders,
-            count(*) FILTER (WHERE status = 'pending')::int AS pending,
-            COALESCE(sum(total_cents) FILTER (WHERE status NOT IN ('canceled','returned')), 0)::bigint AS "revenueCents"
-     FROM orders`,
-  );
-  const p = await one(`SELECT count(*)::int AS products, count(*) FILTER (WHERE active)::int AS active FROM products`);
-  const c = await one(`SELECT count(*)::int AS customers FROM users WHERE role = 'customer'`);
-  const s = await one(`SELECT count(*)::int AS subscribers FROM newsletter_subscribers`);
-  res.json({ ...o, revenueCents: Number(o.revenueCents), ...p, ...c, ...s });
+adminRouter.get("/stats", async (req, res) => {
+  const asked = Number(req.query.days);
+  res.json(await dashboardStats((PERIODS as readonly number[]).includes(asked) ? asked : 14));
 });
 
 const productSchema = z.object({

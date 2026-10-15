@@ -292,6 +292,18 @@ describe("admin two-step login", () => {
       expect(detail.history.map((x: any) => x.status)).toEqual(["pending", "confirmed", "canceled"]);
     });
 
+    it("reports dashboard stats that add up", async () => {
+      const stats = (await api().get("/api/admin/stats?days=7").set(h)).body;
+      expect(stats.period.days).toBe(7);
+      expect(stats.daily).toHaveLength(7);
+      expect(stats.daily.reduce((n: number, d: any) => n + d.orders, 0)).toBe(stats.period.orders);
+      expect(stats.daily.reduce((n: number, d: any) => n + d.revenueCents, 0)).toBe(stats.period.revenueCents);
+      expect(Object.values(stats.statusCounts).reduce((n: number, v: any) => n + v, 0)).toBe(stats.orders);
+      expect(stats.lowStock.some((s: any) => s.slug === "rise-grey-sweatpants" && s.stock === 0)).toBe(true);
+      expect(stats.recentOrders.length).toBeGreaterThan(0);
+      expect((await api().get("/api/admin/stats?days=999").set(h)).body.period.days).toBe(14);
+    });
+
     it("accepts real images and rejects disguised files on upload", async () => {
       const png = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", "base64");
       const ok = await api().post("/api/admin/uploads").set(h).set("Content-Type", "image/png").send(png);

@@ -62,6 +62,10 @@ These only work with the dev login on: `AUTH_DEV_MODE=true` in the backend and `
 Admin first login: scan the QR code with Google Authenticator or Authy, enter the 6-digit code, and save the backup codes. To redo the setup on a test database, run:
 `UPDATE users SET totp_enabled=false, totp_secret_enc=NULL, backup_code_hashes='{}', totp_last_step=0 WHERE email='admin@rise.test';`
 
+### What the dashboard shows
+
+`/admin` opens on a summary of the store: revenue, orders and average order compared with the previous period (switch between 7, 14, 30 and 90 days), a revenue-per-day chart, orders by status, recent orders, what needs attention (pending orders, sold-out sizes, new messages), best sellers and low stock. The rest of the sidebar manages orders, customers and messages, products, categories, deals and promo codes, the announcement bar and shipping rates. Use the "Dark mode" button in the sidebar to switch themes; the choice is remembered.
+
 ### Demo dashboard (no backend)
 
 When the site cannot reach a backend (for example a frontend-only test on Hostinger), `/admin` switches to a demo dashboard on its own:

@@ -187,7 +187,7 @@ function Setup({ onDone }: { onDone: () => void }) {
         {data && (
           <>
             <img className="qr" src={data.qr} alt="Authenticator QR code" />
-            <p style={{ fontSize: 12, color: "#666", wordBreak: "break-all" }}>Can't scan? Enter this key manually: <b>{data.secret}</b></p>
+            <p className="muted small" style={{ wordBreak: "break-all" }}>Can't scan? Enter this key manually: <b>{data.secret}</b></p>
           </>
         )}
         <div className="f" style={{ marginTop: 12 }}><input className="code-in plain" value={code} onChange={(e) => setCode(e.target.value)} inputMode="numeric" maxLength={6} placeholder="000000" required /></div>

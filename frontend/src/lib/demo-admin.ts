@@ -8,7 +8,7 @@ import type { Product } from "./types";
 export const DEMO_USER = "admin";
 export const DEMO_PASSWORD = "admin123";
 
-const KEY = "rise-demo-admin-data";
+const KEY = "rise-demo-admin-data-v3";
 const FLOW: Record<string, string[]> = {
   pending: ["confirmed", "canceled"], confirmed: ["shipped", "canceled"], shipped: ["delivered", "returned"],
   delivered: ["returned"], canceled: [], returned: [],
@@ -43,20 +43,28 @@ function seed(): State {
     { name: "Sara Hassan", email: "sara@rise.test", mobile: "01123456789" },
     { name: "Omar Khaled", email: "omar@rise.test", mobile: "01234567890" },
   ];
-  const plan: [number, string, string, string, [string, string, number][]][] = [
-    [0, "pending", "Cairo", "Maadi", [["rise-black-hoodie", "L", 1]]],
-    [0, "delivered", "Cairo", "Maadi", [["rise-black-sweatpants", "M", 1], ["rise-black-sweatshirt", "L", 1]]],
-    [1, "shipped", "Alexandria", "Smouha", [["rise-black-hoodie", "M", 2]]],
-    [1, "confirmed", "Alexandria", "Smouha", [["rise-black-sweatpants", "L", 1]]],
-    [2, "canceled", "Giza", "Dokki", [["rise-black-sweatshirt", "XL", 1]]],
-    [2, "returned", "Giza", "Dokki", [["rise-black-hoodie", "XL", 1]]],
+  const plan: [number, string, string, string, [string, string, number][], number][] = [
+    [0, "pending", "Cairo", "Maadi", [["rise-black-hoodie", "L", 1]], 0.2],
+    [0, "delivered", "Cairo", "Maadi", [["rise-black-sweatpants", "M", 1], ["rise-black-sweatshirt", "L", 1]], 1],
+    [1, "shipped", "Alexandria", "Smouha", [["rise-black-hoodie", "M", 2]], 2],
+    [1, "confirmed", "Alexandria", "Smouha", [["rise-black-sweatpants", "L", 1]], 3],
+    [2, "canceled", "Giza", "Dokki", [["rise-black-sweatshirt", "XL", 1]], 4],
+    [2, "returned", "Giza", "Dokki", [["rise-black-hoodie", "XL", 1]], 5],
+    [0, "delivered", "Cairo", "Nasr City", [["rise-black-hoodie", "L", 1]], 8],
+    [1, "delivered", "Alexandria", "Smouha", [["rise-black-sweatpants", "M", 2]], 10],
+    [2, "delivered", "Giza", "Dokki", [["rise-black-sweatshirt", "L", 1], ["rise-black-hoodie", "M", 1]], 12],
+    [0, "delivered", "Cairo", "Maadi", [["rise-black-sweatpants", "L", 1]], 15],
+    [1, "delivered", "Alexandria", "Smouha", [["rise-black-hoodie", "L", 1]], 17],
+    [2, "delivered", "Giza", "Dokki", [["rise-black-sweatpants", "M", 1]], 20],
+    [0, "delivered", "Cairo", "Nasr City", [["rise-black-sweatshirt", "M", 1]], 23],
+    [1, "returned", "Alexandria", "Smouha", [["rise-black-hoodie", "S", 1]], 26],
   ];
   const flow: Record<string, string[]> = {
     pending: ["pending"], confirmed: ["pending", "confirmed"], shipped: ["pending", "confirmed", "shipped"],
     delivered: ["pending", "confirmed", "shipped", "delivered"], canceled: ["pending", "canceled"], returned: ["pending", "confirmed", "shipped", "delivered", "returned"],
   };
   const rateFor = (g: string) => RATES.find(([, list]) => list.includes(g))![0];
-  const orders: Order[] = plan.map(([who, status, governorate, city, lines], i) => {
+  const orders: Order[] = plan.map(([who, status, governorate, city, lines, age], i) => {
     const items = lines.map(([slug, size, quantity], j) => {
       const p = products.find((x) => x.slug === slug)!;
       return { id: i * 10 + j + 1, product_name: p.name, color: p.color, size, quantity, unit_price_cents: p.priceCents, image_url: p.images[0]?.url ?? "" };
@@ -64,10 +72,10 @@ function seed(): State {
     const subtotal = items.reduce((s, x) => s + x.unit_price_cents * x.quantity, 0);
     const shipping = rateFor(governorate);
     return {
-      id: i + 1, order_number: `RISE-${1001 + i}`, status, created_at: daysAgo(6 - i), customer_name: people[who]!.name, email: people[who]!.email,
+      id: i + 1, order_number: `RISE-${1001 + i}`, status, created_at: daysAgo(age), customer_name: people[who]!.name, email: people[who]!.email,
       mobile: people[who]!.mobile, governorate, city, address: "12 Test Street", apartment: "", notes: "", promo_code: null,
       subtotal_cents: subtotal, discount_cents: 0, shipping_cents: shipping, total_cents: subtotal + shipping, items,
-      history: flow[status]!.map((s, k) => ({ id: k + 1, status: s, note: "Demo order", created_at: daysAgo(6 - i - k * 0.1) })),
+      history: flow[status]!.map((s, k) => ({ id: k + 1, status: s, note: "Demo order", created_at: daysAgo(age - k * 0.05) })),
     };
   });
   return {
@@ -154,6 +162,40 @@ function simpleCrud<T extends { id: number }>(rows: T[], method: string, id: num
   return rows[i];
 }
 
+function computeStats(s: State, days: number) {
+  const DAY = 86_400_000, now = Date.now();
+  const live = s.orders.filter((o) => !['canceled', 'returned'].includes(o.status));
+  const between = (o: Order, from: number, to: number) => { const t = Date.parse(o.created_at); return t >= from && t < to; };
+  const cur = live.filter((o) => between(o, now - days * DAY, now + 1));
+  const prev = live.filter((o) => between(o, now - 2 * days * DAY, now - days * DAY));
+  const sum = (rows: Order[]) => rows.reduce((n, o) => n + o.total_cents, 0);
+  const daily = Array.from({ length: days }, (_, k) => {
+    const date = new Date(now - (days - 1 - k) * DAY).toISOString().slice(0, 10);
+    const rows = live.filter((o) => o.created_at.slice(0, 10) === date);
+    return { date, revenueCents: sum(rows), orders: rows.length };
+  });
+  const units = new Map<string, { name: string; units: number; revenueCents: number; imageUrl: string }>();
+  for (const o of cur) for (const i of o.items) {
+    const row = units.get(i.product_name) ?? { name: i.product_name, units: 0, revenueCents: 0, imageUrl: i.image_url };
+    row.units += i.quantity;
+    row.revenueCents += i.quantity * i.unit_price_cents;
+    units.set(i.product_name, row);
+  }
+  const statusCounts: Record<string, number> = {};
+  for (const o of s.orders) statusCounts[o.status] = (statusCounts[o.status] ?? 0) + 1;
+  return {
+    orders: s.orders.length, pending: statusCounts.pending ?? 0, revenueCents: sum(live), products: s.products.length,
+    active: s.products.filter((p) => p.active).length, customers: s.customers.length, subscribers: s.subscribers.length,
+    recentMessages: s.messages.filter((m) => Date.parse(m.createdAt) > now - 7 * DAY).length,
+    period: { days, revenueCents: sum(cur), orders: cur.length, prevRevenueCents: sum(prev), prevOrders: prev.length },
+    daily, statusCounts,
+    topProducts: [...units.values()].sort((a, b) => b.units - a.units).slice(0, 5),
+    lowStock: s.products.filter((p) => p.active).flatMap((p) => p.sizes.filter((z) => z.stock <= 3).map((z) => ({ productId: p.id, name: p.name, slug: p.slug, size: z.size, stock: z.stock }))).sort((a, b) => a.stock - b.stock).slice(0, 12),
+    lowStockAt: 3,
+    recentOrders: [...s.orders].sort((a, b) => b.created_at.localeCompare(a.created_at)).slice(0, 6).map((o) => ({ id: o.id, orderNumber: o.order_number, status: o.status, createdAt: o.created_at, customerName: o.customer_name, totalCents: o.total_cents })),
+  };
+}
+
 export async function demoRequest(method: string, path: string, body: unknown, raw?: { data: Blob }): Promise<any> {
   const [pathname = "", qs = ""] = path.split("?");
   const q = new URLSearchParams(qs);
@@ -174,11 +216,7 @@ export async function demoRequest(method: string, path: string, body: unknown, r
   }
 
   switch (area) {
-    case "stats": {
-      const live = s.orders.filter((o) => !["canceled", "returned"].includes(o.status));
-      return { orders: s.orders.length, pending: s.orders.filter((o) => o.status === "pending").length, revenueCents: live.reduce((n, o) => n + o.total_cents, 0),
-        products: s.products.length, active: s.products.filter((p) => p.active).length, customers: s.customers.length, subscribers: s.subscribers.length };
-    }
+    case "stats": return computeStats(s, [7, 14, 30, 90].includes(Number(q.get("days"))) ? Number(q.get("days")) : 14);
     case "products": {
       if (method === "GET") return id ? s.products.find((p) => p.id === id) ?? fail(404, "Product not found") : s.products;
       if (method === "DELETE") { s.products = s.products.filter((p) => p.id !== id); return done(undefined); }
