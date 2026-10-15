@@ -109,6 +109,6 @@ If the Node.js option is not available on the plan, the same code runs on any VP
 
 ## Known gaps
 - Payment is cash on delivery only, as on the live store.
-- The live store's `hero.jpg`, `collection.jpg`, `about-banner.jpg` and the 2nd-4th product photos return 404 today; they are
-  missing here too. Product photos can be uploaded in the dashboard; the 3 page images go in `frontend/public/images/`.
+- The site includes AI-generated hero, collection, About and product model photography based on the existing garment
+  references. Original catalog photos are preserved. Assets and generation prompts are documented in `docs/image-prompts.md`.
 - Past orders and newsletter subscribers of the old store are not imported (the old site stores them in PHP scripts).

@@ -23,6 +23,12 @@ export default function ProductView({ product }: { product: Product }) {
   const [chartOpen, setChartOpen] = useState(false);
   const timer = useRef<number | undefined>(undefined);
   const chart = chartFor(product);
+  const imageIndex = Math.max(0, product.images.findIndex((item) => item.url === image));
+
+  function changeImage(direction: number) {
+    const next = product.images[(imageIndex + direction + product.images.length) % product.images.length];
+    if (next) setImage(next.url);
+  }
 
   const stockFor = (s: string | null) => (s ? (product.sizes.find((x) => x.size === s)?.stock ?? 0) : null);
   const stock = stockFor(size);
@@ -60,24 +66,27 @@ export default function ProductView({ product }: { product: Product }) {
         <div className="product-gallery">
           <div className="thumbnails" id="thumbnail-container">
             {product.images.map((img, i) => (
-              <img
+              <button
+                type="button"
                 key={img.url}
-                src={img.url}
-                alt={`${product.name} image ${i + 1}`}
                 className="thumbnail"
-                tabIndex={0}
+                aria-label={`View ${img.alt || `${product.name} image ${i + 1}`}`}
+                aria-pressed={image === img.url}
                 onClick={() => setImage(img.url)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" || e.key === " ") {
-                    e.preventDefault();
-                    setImage(img.url);
-                  }
-                }}
-              />
+              >
+                <img src={img.url} alt={img.alt || `${product.name} image ${i + 1}`} loading="lazy" />
+              </button>
             ))}
           </div>
           <div className="main-image">
-            <img id="main-image" src={image} alt={product.name} />
+            <img id="main-image" src={image} alt={product.images[imageIndex]?.alt || product.name} />
+            {product.images.length > 1 && (
+              <div className="gallery-controls">
+                <button type="button" aria-label="Previous photo" onClick={() => changeImage(-1)}>←</button>
+                <span aria-live="polite">{imageIndex + 1} / {product.images.length}</span>
+                <button type="button" aria-label="Next photo" onClick={() => changeImage(1)}>→</button>
+              </div>
+            )}
           </div>
         </div>
 

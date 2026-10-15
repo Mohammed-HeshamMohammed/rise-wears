@@ -73,6 +73,22 @@ export async function seed() {
           id, `/images/products/${p.legacy}/${n}.jpg`, `${p.name} image ${n}`, n,
         ]);
       }
+      await db.query("INSERT INTO product_images (product_id, url, alt, sort_order) VALUES ($1,$2,$3,-1)", [
+        id, `/images/products/${p.legacy}/model.webp`, `${p.name} worn by a model`,
+      ]);
+      for (const [i, [filename, label]] of [
+        ["walking", "Walking pose"], ["seated", "Seated pose"], ["side", "Side view"],
+        ["back", "Back view"], ["detail", "Fabric and logo detail"], ["flatlay", "Flat lay"],
+      ].entries()) {
+        await db.query("INSERT INTO product_images (product_id, url, alt, sort_order) VALUES ($1,$2,$3,$4)", [
+          id, `/images/products/${p.legacy}/${filename}.webp`, `${p.name} - ${label}`, 10 + i,
+        ]);
+      }
+      if (p.legacy === "blackhoodie" || p.legacy === "blacksweatshirt") {
+        await db.query("INSERT INTO product_images (product_id, url, alt, sort_order) VALUES ($1,$2,$3,16)", [
+          id, `/images/products/${p.legacy}/outfit.webp`, `${p.name} - Styled outfit flat lay`,
+        ]);
+      }
       for (const [i, [size, stock]] of Object.entries(p.stock).entries()) {
         await db.query("INSERT INTO product_variants (product_id, size, stock, sort_order) VALUES ($1,$2,$3,$4)", [id, size, stock, i]);
       }

@@ -11,3 +11,6 @@ uploads/
 .DS_Store
 tsconfig.tsbuildinfo
 next-env.d.ts
+.playwright-cli/
+output/playwright/
+frontend/output/playwright/

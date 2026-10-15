@@ -20,7 +20,7 @@ export default function AboutPage() {
       </section>
 
       <section className="about-image">
-        <img src="/images/about-banner.jpg" alt="Rise Lifestyle" />
+        <img src="/images/about-banner.webp" alt="Three models wearing RISE hoodies, sweatshirts and sweatpants outdoors" width={1672} height={940} loading="lazy" />
       </section>
 
       <section className="story">

@@ -55,7 +55,7 @@ export default async function HomePage() {
 
       <section className="featured">
         <div className="featured-image">
-          <img src="/images/collection.jpg" alt="Rise Collection" />
+          <img src="/images/collection.webp" alt="Model wearing the RISE black sweatshirt and grey sweatpants" width={1122} height={1402} loading="lazy" />
         </div>
         <div className="featured-content">
           <span className="section-title">FEATURED COLLECTION</span>

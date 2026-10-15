@@ -13,7 +13,7 @@
 
     height:100vh;
 
-    background:url("../images/hero/hero.jpg")
+    background:url("../images/hero/hero.webp")
         center center/cover no-repeat;
 
     display:flex;
@@ -559,6 +559,30 @@
 
 
 /* ---------- MOBILE ---------- */
+
+@media(max-width:800px){
+    .hero{
+        height:calc(100svh - 110px);
+        min-height:700px;
+        background-image:url("../images/hero/hero-mobile.webp");
+    }
+    .hero-content{
+        display:flex;
+        flex-direction:column;
+        align-items:center;
+        width:100%;
+        height:100%;
+        padding:32px 20px;
+        box-sizing:border-box;
+    }
+    .hero .hero-description{
+        margin-top:auto;
+        margin-bottom:24px;
+    }
+    .hero-overlay{
+        background:linear-gradient(rgba(0,0,0,.5),rgba(0,0,0,.1) 45%,rgba(0,0,0,.6));
+    }
+}
 
 @media(max-width:500px){
 
